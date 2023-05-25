@@ -1,50 +1,41 @@
 // USER MODEL
-
-const mongoose = require('mongoose');
-import validator from "validator";
+import { Schema, model }  from "mongoose";
 
 // name, email, password, passwordConfirm
-
-const userSchema = new mongoose.Schema({
-    name: {
+const userSchema = new Schema({
+    fullName: {
         type: String,
         required: [true, 'please tell us your name'],
     },
     email: {
         type: String,
-        require: [true, 'please tell us your name'],
+        require: [true, 'please provide an email address'],
         unique: true,
         lowercase: true,
-        validator: [validator.isEmail, 'please provide a valid email']
+        validator: {
+            match: [/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, "Please add a valid email string to the email path."]
+          }
     },
     phone: {
         type: String,
-        required: [true, 'please provide your phone number'],
-        minlength: 11
+        required: true,
       },
     password: {
         type: String,
         required: [true, 'please provide a password'],
         minlength: 6
     },
-    passwordConfirm: {
+    confirmPassword: {
         type: String,
         required: [true, 'please provide a password'],
-        validate: {
-            validator: function(el) {
-                return el === this.password;
-            },
-            message: 'password are not the same!'
-        }
-    }
+        minlength: 6
+    },
 });
 
-// This is a pre-middleware on save that happens betweern getting and saving the data to the database.
-userSchema.pre('save', function(next) {
-    if(!this.isModified('password')) return next();
-})
+// // This is a pre-middleware on save that happens betweern getting and saving the data to the database.
+// userSchema.pre('save', function(next) {
+//     if(!this.isModified('password')) return next();
+// })
 
 
-// creating the model out of the schema
-const user = mongoose.model('user', userSchema)
-module.exports = user;
+export default model('User', userSchema)

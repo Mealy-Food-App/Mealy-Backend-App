@@ -1,9 +1,10 @@
 import express from "express";
-const userController = require('../controllers/user.auth')
+import UserController from '../controllers/user.auth.js';
+import { tryCatchHandler } from "../utils/catchAsync.js";
 
 const router = express.Router();
-router.post('/signup', authController.signup);
+router.post('/signup', tryCatchHandler (UserController.signup));
+router.post('/signin', tryCatchHandler (UserController.signinUser));
 
 
-
-module.exports = router;
+export {router};
