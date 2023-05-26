@@ -8,6 +8,7 @@ const app = express();
 
 // Database connection
 mongoose.connect(config.mongodb_connection_url).then(() => console.log("Database Connection Established")).catch((e) => console.log(e.message));
+console.log(config.mongodb_connection_url)
 
 // PORT configuration
 const port = config.port || 5000;
