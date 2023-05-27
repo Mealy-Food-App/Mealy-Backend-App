@@ -9,3 +9,4 @@ const environment = process.env.NODE_ENV;
 console.log("Sever set up to", environment, "!!!");
 
 export const config = environment.trim() === "development" ? { ...development } : environment.trim() === "staging" ? { ...staging } : { ...production };
+
