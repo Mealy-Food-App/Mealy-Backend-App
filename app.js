@@ -3,11 +3,8 @@ import mongoose from "mongoose";
 import { config } from "./src/config/index.js";
 import {router as userRouter} from "./src/router/user.route.js";
 import { globalErrorHandler } from "./src/utils/errorHandler.js";
-<<<<<<< HEAD
 import jwt from 'jsonwebtoken'
-=======
 import morgan from "morgan";
->>>>>>> 41cf55198dcfca018a8702a6e97518230c8ec9d4
 
 const app = express();
 
