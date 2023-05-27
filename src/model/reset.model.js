@@ -1,16 +1,4 @@
-userId: {
-    type: Schema.Types.ObjectId,
-    require: [true, 'please enter your email'],
-    ref: "User",
-},
-resetToken: {
-    type: String,
-},
-tokenExpires: {
-    type: Date,
-},
-
-});
+/*
 
 
 
@@ -20,9 +8,6 @@ tokenExpires: {
 // })
 
 
-import nodemailer from "nodemailer"
-//import Reset from "../model/reset.model";
-import jwt from 'jsonwebtoken';
 
 export default model('User', userSchema)
 
@@ -30,7 +15,7 @@ export default model('User', userSchema)
 router.post('/forgotpassword', UserController.forgotPassword);
 router.post('/resetpassword', UserController.resetPassword);
 
-/forgot pssword
+//forgot pssword
 
   static async forgotPassword(req, res) {
     const { email } = req.body;
@@ -123,3 +108,4 @@ JWT_SECRET = jstyuiehdbcsj5gthkiy6gdmhurki8nk
 
 EMAIL : 'mealyapp@gmail.com'
 PASSWORD: 'password'
+*/
