@@ -1,14 +1,23 @@
 // USER AUTH
 import User from "../model/user.model.js";
+<<<<<<< HEAD
 import { createUserValidator, signinUserValidator } from "../validator/user.validator.js"
+=======
+import {
+  createUserValidator,
+  signinUserValidator,
+} from "../validator/user.validator.js";
+>>>>>>> 41cf55198dcfca018a8702a6e97518230c8ec9d4
 import { BadUserRequestError } from "../error/error.js";
-import bcrypt from "bcrypt"
+import { NotFoundError } from "../error/error.js";
+import bcrypt from "bcrypt";
 import { config } from "../config/index.js";
 import nodemailer from "nodemailer"
 //import Reset from "../model/reset.model";
 import jwt from 'jsonwebtoken';
 // const catchAsync = require('../utils/catchAsync.js');
 
+<<<<<<< HEAD
 
 
 export default class UserController {
@@ -113,8 +122,33 @@ export default class UserController {
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
+=======
+export default class UserController {
+  static async signup(req, res) {
+    // Joi validation
+    const { error, value } = await createUserValidator.validate(req.body);
+    if (error) throw error;
 
+    const emailExists = await User.find({ email: req.body.email });
+    if (emailExists.length > 0)
+      throw new BadUserRequestError(
+        "An account with this email already exists."
+      );
+    const saltRounds = config.bcrypt_salt_round
+    const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
+>>>>>>> 41cf55198dcfca018a8702a6e97518230c8ec9d4
 
+    const user = {
+      fullName: req.body.fullName,
+      email: req.body.email,
+      phone: req.body.phone,
+      password: req.body.password,
+      confirmPassword: req.body.confirmPassword,
+      password: hashedPassword,
+      confirmPassword: hashedPassword
+    };
+
+<<<<<<< HEAD
   // Reset password
   static async resetPassword(req, res) {
     const { email, password, token } = req.body;
@@ -153,3 +187,50 @@ export default class UserController {
     }
   }
 };
+=======
+    const newUser = await User.create(user);
+    res.status(200).json({
+      message: "User created successfully",
+      status: "Success",
+      data: {
+        user: newUser,
+        // access_token: generateToken(newUser)
+      },
+    });
+  }
+
+  static async findUser(req, res) {
+    const user = await User.findOne({ email: req.query?.email });
+    if (!user) throw new NotFoundError("User not found");
+
+    res.status(200).json({
+      message: "User found successfully",
+      status: "Success",
+      data: {
+        user,
+      },
+    });
+  }
+
+  // login
+  static async signinUser(req, res) {
+    const { error } = signinUserValidator.validate(req.body);
+    if (error) throw error;
+    if (!req.body.email)
+      throw new BadUserRequestError("Please provide your email before login");
+
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) throw new BadUserRequestError("User does not exist");
+    const hash = bcrypt.compareSync(req.body.password, user.password);
+    if (!hash) throw new BadUserRequestError("email or password is incorrect");
+    res.status(200).json({
+      message: "Login successfully",
+      status: "success",
+      data: {
+        user,
+        // login_token: genToken(user),
+      },
+    });
+  }
+}
+>>>>>>> 41cf55198dcfca018a8702a6e97518230c8ec9d4

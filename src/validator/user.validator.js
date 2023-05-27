@@ -31,6 +31,11 @@ export const createUserValidator = Joi.object({
 
 // login validator
 export const signinUserValidator = Joi.object({
-  email: Joi.string().required(),
-  password: Joi.string().required(),
- }).strict();
+  email: Joi.string()
+  .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+  .required()
+  .messages({
+    "string.pattern.base": "Email is not a valid email address",
+  }),
+password: Joi.string().required(),
+}).strict();

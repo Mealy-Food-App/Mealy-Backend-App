@@ -4,6 +4,7 @@ import { tryCatchHandler } from "../utils/catchAsync.js";
 //import ForgotPasswordController from "../controllers/reset.auth.js"
 
 
+
 const router = express.Router();
 router.post('/signup', tryCatchHandler (UserController.signup));
 router.post('/signin', tryCatchHandler (UserController.signinUser));
