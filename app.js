@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { config } from "./src/config/index.js";
 import {router as userRouter} from "./src/router/user.route.js";
 import { globalErrorHandler } from "./src/utils/errorHandler.js";
+import morgan from "morgan";
 
 const app = express();
 
@@ -27,6 +28,7 @@ const port = config.port || 5000;
 
 // Middlewares
 app.use(express.json());
+app.use(morgan("tiny"))
 
 // Routes 
 app.use('/api/mealy/user', userRouter);
