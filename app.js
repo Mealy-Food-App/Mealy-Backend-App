@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { config } from "./src/config/index.js";
 import {router as userRouter} from "./src/router/user.route.js";
 import { globalErrorHandler } from "./src/utils/errorHandler.js";
+import jwt from 'jsonwebtoken'
 
 const app = express();
 
