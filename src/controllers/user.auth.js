@@ -97,7 +97,7 @@ export default class UserController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      //const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
 
       user.resetToken = token;
@@ -115,7 +115,7 @@ export default class UserController {
         from: "roheemahadebisi@gmail.com",
         to: email,
         subject: 'Reset Password',
-        text: `Please click on the following link to reset your password: http://127.0.0.1:5000/api/mealy/user/resetpassword`,
+        text: `Please click on the following link to reset your password: http://127.0.0.1:5000/api/mealy/user/resetpassword/${token}`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
