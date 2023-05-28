@@ -21,7 +21,6 @@
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.2.0",
-    "nodemon": "^2.0.22",
     "nodemailer": "^6.9.2",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
