@@ -31,7 +31,21 @@ const userSchema = new Schema({
         required: [true, 'please provide a password'],
         minlength: 6
     },
+    userId: {
+        type: Schema.Types.ObjectId,
+        require: [true, 'please enter your email'],
+        ref: "User",
+    },
+    resetToken: {
+        type: String,
+    },
+    tokenExpires: {
+        type: Date,
+    },
+
 });
+
+
 
 // // This is a pre-middleware on save that happens betweern getting and saving the data to the database.
 // userSchema.pre('save', function(next) {
