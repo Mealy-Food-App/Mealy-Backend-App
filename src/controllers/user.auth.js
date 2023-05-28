@@ -97,7 +97,7 @@ export default class UserController {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      //const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
 
       user.resetToken = token;
@@ -107,15 +107,15 @@ export default class UserController {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: appEmail,
-          pass: password
+          user: "roheemahadebisi@gmail.com",
+          pass: "ukfktxvpeltwwiuu"
         },
       });
       const mailOptions = {
-        from: appEmail,
+        from: "roheemahadebisi@gmail.com",
         to: email,
         subject: 'Reset Password',
-        text: `Please click on the following link to reset your password: ${process.env.DEV_MONGODB_CONNECTION_URL}/resetpassword/${token}`,
+        text: `Please click on the following link to reset your password: http://127.0.0.1:5000/api/mealy/user/resetpassword`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -134,21 +134,21 @@ export default class UserController {
 
     // Reset password
     static async resetPassword(req, res) {
-      const { email, password, token } = req.body;
+      const { email, password } = req.body;
   
-      try {
-        const resetToken = await User.findOne({ token });
-        if (!resetToken) {
-          return res.status(404).json({ message: 'Invalid or expired token' });
-        }
+    try {
+        //const user = await User.findOne({ email });
+        //if (!resetToken) {
+          //return res.status(404).json({ message: 'Invalid or expired token' });
+       //// }
   
-        if (resetToken.expires < Date.now()) {
-          await resetToken.remove();
+        //if (resetToken.expires < Date.now()) {
+        //  await resetToken.remove();
   
-          return res.status(400).json({ message: 'Token expired' });
-        }
+         // return res.status(400).json({ message: 'Token expired' });
+        //}
   
-        const user = await User.findOne({ _id: resetToken.userId });
+        const user = await User.findOne({ email });
         if (!user) {
           return res.status(404).json({ message: 'User not found' });
         }
@@ -161,7 +161,7 @@ export default class UserController {
         await user.save();
   
     
-        await resetToken.remove();
+       // await resetToken.remove();
   
         return res.status(200).json({ message: 'Password reset successful' });
       } catch (error) {
