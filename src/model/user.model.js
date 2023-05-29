@@ -16,17 +16,7 @@ const userSchema = new Schema({
             match: [/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, "Please add a valid email string to the email path."]
           }
     },
-    phone: {
-        type: String,
-        required: true,
-        unique: true
-      },
     password: {
-        type: String,
-        required: [true, 'please provide a password'],
-        minlength: 6
-    },
-    confirmPassword: {
         type: String,
         required: [true, 'please provide a password'],
         minlength: 6

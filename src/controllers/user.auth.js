@@ -11,7 +11,6 @@ import { config } from "../config/index.js";
 import nodemailer from "nodemailer"
 //import Reset from "../model/reset.model";
 import jwt from 'jsonwebtoken';
-// const catchAsync = require('../utils/catchAsync.js');
   
 export default class UserController {
   static async signup(req, res) {
@@ -30,11 +29,8 @@ export default class UserController {
     const user = {
       fullName: req.body.fullName,
       email: req.body.email,
-      phone: req.body.phone,
       password: req.body.password,
-      confirmPassword: req.body.confirmPassword,
       password: hashedPassword,
-      confirmPassword: hashedPassword
     };
 
 
