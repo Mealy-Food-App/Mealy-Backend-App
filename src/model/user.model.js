@@ -31,15 +31,16 @@ const userSchema = new Schema(
       ref: "User",
     },
     resetToken: {
-      type: String, 
+        type: String,
     },
     tokenExpires: {
-      type: Date,
+        type: Date,
     },
   },
   {
     timestamps: true,
   }
+
 );
 
 // // This is a pre-middleware on save that happens betweern getting and saving the data to the database.
