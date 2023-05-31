@@ -16,6 +16,7 @@ import jwt from 'jsonwebtoken';
 function generateToken() {
   return Math.floor(10000 + Math.random() * 90000);
 }
+
 export default class UserController {
   static async signup(req, res) {
     // Joi validation
@@ -62,6 +63,7 @@ export default class UserController {
     });
   }
 
+
   // login
   static async signinUser(req, res) {
     const { error } = signinUserValidator.validate(req.body);
@@ -79,13 +81,13 @@ export default class UserController {
       status: "success",
       data: {
         user,
-        login_token: genToken(user),
+        // login_token: genToken(user),
       },
     });
   }
 
-  //forgot pssword
 
+  //forgot pssword
   static async forgotPassword(req, res) {
     const { email } = req.body;
     //const appEmail = process.env.EMAIL;
@@ -100,7 +102,6 @@ export default class UserController {
 
       user.token = token;
       await user.save();
-
 
       const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -132,8 +133,8 @@ export default class UserController {
     }
   }
 
-  //confirmtoken
 
+  //confirmtoken
   static async confirmToken(req, res) {
     const { token } = req.body;
 
@@ -143,8 +144,6 @@ export default class UserController {
         return res.status(404).json({ message: 'Invalid or expired token' });
       }
 
-
-
       if (userToken.expireAt > Date.now()) {
 
         return res.status(400).json({ message: 'Token expired' });
@@ -152,13 +151,12 @@ export default class UserController {
 
       return res.status(200).json({ message: 'Token confirmed' });
 
-
-
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
+
 
   // Reset password
   static async resetPassword(req, res) {
@@ -175,7 +173,6 @@ export default class UserController {
       user.password = hashedPassword;
       user.confirmPassword = hashedPassword;
       await user.save();
-
 
       return res.status(200).json({ message: 'Password reset successful' });
     } catch (error) {

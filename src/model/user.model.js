@@ -30,17 +30,18 @@ const userSchema = new Schema(
       require: [true, "please enter your email"],
       ref: "User",
     },
-    resetToken: {
-        type: String,
+    token: {
+      type: String,
     },
-    tokenExpires: {
-        type: Date,
+    expireAt: {
+      type: Date,
+      default: Date.now,
+      index: { expires: 3600 },
     },
   },
   {
     timestamps: true,
   }
-
 );
 
 // // This is a pre-middleware on save that happens betweern getting and saving the data to the database.
