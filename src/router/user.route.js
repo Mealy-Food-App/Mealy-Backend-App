@@ -11,6 +11,7 @@ router.post('/signin', tryCatchHandler (UserController.signinUser));
 router.get('/', tryCatchHandler (UserController.findUser));
 
 router.post('/forgotpassword', UserController.forgotPassword);
+router.post('/confirmtoken', UserController.confirmToken);
 router.post('/resetpassword', UserController.resetPassword);
 
 export {router};

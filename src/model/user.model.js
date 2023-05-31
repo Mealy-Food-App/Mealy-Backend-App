@@ -36,12 +36,14 @@ const userSchema = new Schema({
         require: [true, 'please enter your email'],
         ref: "User",
     },
-    resetToken: {
+    token: {
         type: String,
     },
-    tokenExpires: {
-        type: Date,
-    },
+    expireAt: {
+        type: Date, 
+        default: Date.now,
+        index: { expires: 3600 }
+    }
 
 });
 
