@@ -12,7 +12,10 @@ import nodemailer from "nodemailer"
 //import Reset from "../model/reset.model";
 import jwt from 'jsonwebtoken';
 // const catchAsync = require('../utils/catchAsync.js');
-  
+
+function generateToken() {
+  return Math.floor(10000 + Math.random() * 90000);
+}
 export default class UserController {
   static async signup(req, res) {
     // Joi validation
@@ -87,35 +90,33 @@ export default class UserController {
 
   static async forgotPassword(req, res) {
     const { email } = req.body;
-    const appEmail = process.env.EMAIL;
-    const password = process.env.PASSWORD;
-
-
+    //const appEmail = process.env.EMAIL;
+    //const password = process.env.PASSWORD;
     try {
       const user = await User.findOne({ email });
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = generateToken().toString()
 
-
-      user.resetToken = token;
-      user.expires = Date.now() + 60 * 60 * 1000; // 1 hour expiration time
+      user.token = token;
       await user.save();
+
 
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: "roheemahadebisi@gmail.com",
-          pass: "ukfktxvpeltwwiuu"
+          user: "mealybackend@gmail.com",
+          pass
+            : "cllvzfruzmuvzwai"
         },
       });
       const mailOptions = {
-        from: "roheemahadebisi@gmail.com",
+        from: "mealybackend@gmail.com",
         to: email,
         subject: 'Reset Password',
-        text: `Please click on the following link to reset your password: http://127.0.0.1:5000/api/mealy/user/resetpassword/${token}`,
+        text: `Your verification code is: ${token}`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -125,6 +126,7 @@ export default class UserController {
         }
         console.log('Reset email sent:', info.response);
         return res.status(200).json({ message: 'Reset email sent' });
+
       });
     } catch (error) {
       console.log(error);
@@ -132,41 +134,55 @@ export default class UserController {
     }
   }
 
-    // Reset password
-    static async resetPassword(req, res) {
-      const { email, password } = req.body;
-  
-    try {
-        //const user = await User.findOne({ email });
-        //if (!resetToken) {
-          //return res.status(404).json({ message: 'Invalid or expired token' });
-       //// }
-  
-        //if (resetToken.expires < Date.now()) {
-        //  await resetToken.remove();
-  
-         // return res.status(400).json({ message: 'Token expired' });
-        //}
-  
-        const user = await User.findOne({ email });
-        if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-        }
-  
+  //confirmtoken
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-  
-  
-        user.password = hashedPassword;
-        await user.save();
-  
-    
-       // await resetToken.remove();
-  
-        return res.status(200).json({ message: 'Password reset successful' });
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Internal server error' });
+  static async confirmToken(req, res) {
+    const { token } = req.body;
+
+    try {
+      const userToken = await User.findOne({ token });
+      if (!userToken) {
+        return res.status(404).json({ message: 'Invalid or expired token' });
       }
+
+
+
+      if (userToken.expireAt > Date.now()) {
+
+        return res.status(400).json({ message: 'Token expired' });
+      }
+
+      return res.status(200).json({ message: 'Token confirmed' });
+
+
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Internal server error' });
     }
-  };
+  }
+
+  // Reset password
+  static async resetPassword(req, res) {
+    const { email } = req.body;
+
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const saltRounds = config.bcrypt_salt_round
+      const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
+      user.password = hashedPassword;
+      user.confirmPassword = hashedPassword;
+      await user.save();
+
+
+      return res.status(200).json({ message: 'Password reset successful' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+};
