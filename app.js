@@ -15,18 +15,6 @@ console.log(config.mongodb_connection_url)
 // PORT configuration
 const port = config.port || 5000;
 
-// app.use((err, req, res, next)=>{
-//     return res.status(err.status || 404).json({
-//       message: err.message,
-//       status: "Failed",
-//     })
-//   })
-
-// app.get('/', (req, res) => {
-//   res.status(200)
-//   .json({ message: 'hello from this side', app: 'mealy'});
-// });
-
 // Middlewares
 app.use(express.json());
 app.use(morgan("tiny"))

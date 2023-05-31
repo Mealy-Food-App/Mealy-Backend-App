@@ -67,6 +67,7 @@ export default class UserController {
 
     const user = await User.findOne({ email: req.body.email });
     if (!user) throw new BadUserRequestError("User does not exist");
+
     const hash = bcrypt.compareSync(req.body.password, user.password);
     if (!hash) throw new BadUserRequestError("email or password is incorrect");
     res.status(200).json({
@@ -74,7 +75,7 @@ export default class UserController {
       status: "success",
       data: {
         user,
-        // login_token: genToken(user),
+        login_token: genToken(user),
       },
     });
   }
