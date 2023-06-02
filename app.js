@@ -13,11 +13,13 @@ mongoose.connect(config.mongodb_connection_url).then(() => console.log("Database
 console.log(config.mongodb_connection_url)
 
 // PORT configuration
-const port = config.port || 5000;
+const port = config.port || 8080;
 
 // Middlewares
 app.use(express.json());
 app.use(morgan("tiny"))
+// app.use(bodyParser.json());
+
 
 // Routes 
 app.use('/api/mealy/user', userRouter);

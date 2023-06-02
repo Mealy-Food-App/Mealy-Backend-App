@@ -25,6 +25,14 @@ const userSchema = new Schema(
       required: [true, "please provide a password"],
       minlength: 6,
     },
+    phoneNumber: {
+      type: String,
+      required: false,
+    },
+    deliveryAddress: {
+      type: String,
+      required: false,
+    },
     userId: {
       type: Schema.Types.ObjectId,
       require: [true, "please enter your email"],
