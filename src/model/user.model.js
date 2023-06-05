@@ -33,6 +33,10 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+    message: {
+      type: String,
+      required: false,
+    },
     userId: {
       type: Schema.Types.ObjectId,
       require: [true, "please enter your email"],

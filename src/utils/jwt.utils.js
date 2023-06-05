@@ -8,3 +8,8 @@ export function genToken(user) {
   const token = jwt.sign(payload, config.jwt_key, { expiresIn: 60 * 60 * 24 });
   return token;
 }
+
+
+export function authToken(token) {
+  return jwt.verify(token, config.jwt_key);
+}

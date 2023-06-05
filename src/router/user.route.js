@@ -1,8 +1,12 @@
 import express from "express";
 import UserController from '../controllers/user.auth.js';
 import { tryCatchHandler } from "../utils/catchAsync.js";
-// import UserUpdate from "../controllers/updateUser.js";
 import UpdateController from "../controllers/updateUser.js";
+import FeedbackController from "../controllers/feedback.js";
+import RatingController from "../controllers/rating.js";
+import { userAuthMiddleWare } from "../middlewares/auth.middleware.js";
+import logoutController from "../controllers/logout.js";
+
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
 
@@ -19,7 +23,16 @@ router.post('/confirmtoken', UserController.confirmToken);
 router.post('/resetpassword', UserController.resetPassword);
 
 // user update route
-router.put('/updateuser', UpdateController.updateUser);
+router.put('/updateuser', userAuthMiddleWare, tryCatchHandler (UpdateController.updateUser));
+
+// feedback route
+router.post('/feedback', userAuthMiddleWare, tryCatchHandler (FeedbackController.feedBack))
+
+// rating route
+router.post('/rating', userAuthMiddleWare, tryCatchHandler (RatingController.ratings))
+
+// logout route
+router.get('/logout', logoutController.logOut);
 
 
 export {router};
