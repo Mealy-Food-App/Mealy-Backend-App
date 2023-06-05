@@ -11,7 +11,7 @@ import { config } from "../config/index.js";
 import nodemailer from "nodemailer"
 //import Reset from "../model/reset.model";
 import jwt from 'jsonwebtoken';
-// const catchAsync = require('../utils/catchAsync.js');
+import { genToken } from "../utils/jwt.utils.js";
 
 function generateToken() {
   return Math.floor(10000 + Math.random() * 90000);
@@ -81,7 +81,7 @@ export default class UserController {
       status: "success",
       data: {
         user,
-        // login_token: genToken(user),
+        login_token: genToken(user),
       },
     });
   }
