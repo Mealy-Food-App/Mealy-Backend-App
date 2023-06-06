@@ -7,6 +7,8 @@ import jwt from 'jsonwebtoken';
 import morgan from "morgan";
 import {router as productRouter} from "./src/router/product.route.js";
 import {router as categoryRouter} from "./src/router/home.route.js";
+import passport from "passport";
+import session from "express-session";
 
 const app = express();
 
@@ -15,23 +17,23 @@ mongoose.connect(config.mongodb_connection_url).then(() => console.log("Database
 console.log(config.mongodb_connection_url)
 
 // PORT configuration
-const port = config.port || 5000;
-
-// app.use((err, req, res, next)=>{
-//     return res.status(err.status || 404).json({
-//       message: err.message,
-//       status: "Failed",
-//     })
-//   })
-
-// app.get('/', (req, res) => {
-//   res.status(200)
-//   .json({ message: 'hello from this side', app: 'mealy'});
-// });
+const port = config.port || 8080;
 
 // Middlewares
 app.use(express.json());
 app.use(morgan("tiny"))
+// app.use(bodyParser.json());
+app.use(
+  session({
+    secret: 'jstyuiehdbcsj5gthkiy6gdmhurki8nk',
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes 
 app.use('/api/mealy/user', userRouter);
