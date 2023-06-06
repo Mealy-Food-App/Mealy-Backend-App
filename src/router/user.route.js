@@ -14,4 +14,5 @@ router.post('/forgotpassword', UserController.forgotPassword);
 router.post('/confirmtoken', UserController.confirmToken);
 router.post('/resetpassword', UserController.resetPassword);
 
+
 export {router};
