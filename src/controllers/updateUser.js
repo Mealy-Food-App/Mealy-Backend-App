@@ -10,11 +10,11 @@ export default class UpdateController {
       return res.status(400).json({ error: error.message });
     }
 
-    // const getUser = await User.findOneAndUpdate(
-    //   { email: req.user.email },
-    //   req.body
-    // );
-    // const { fullName, email, phoneNumber, deliveryAddress } = req.body;
+    const getUser = await User.findOneAndUpdate(
+      { email: req.user.email },
+      req.body
+    );
+    const { fullName, email, phoneNumber, deliveryAddress } = req.body;
 
 
     //   const transporter = nodemailer.createTransport({
