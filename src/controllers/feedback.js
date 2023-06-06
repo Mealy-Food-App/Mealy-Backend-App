@@ -15,26 +15,26 @@ export default class FeedbackController {
     try {
       const userId = req.user._id;
 
-      const userFeedback = new UserFeedback({
-        fullName: req.body.fullName,
-        email: req.body.email,
+      const FeedbackData = new UserFeedback({
+        fullName: req.user.fullName,
+        email: req.user.email,
         user: userId,
         message,
       });
 
-      await userFeedback.save();
+      await FeedbackData.save();
 
       res.status(200).json({
         message: "User feeback sent successfully",
         status: "Success",
         data: {
-          userFeedback,
+          FeedbackData,
         },
       });
 
     } catch (err) {
       console.error("Error saving feedback to the database", err);
-      res.status(500).send("Internal server error");
+      res.status(500).json({ error: err.message });
     }
   }
 }

@@ -6,17 +6,6 @@ const feedbackSchema = new Schema({
     ref: "User",
     required: false,
   },
-  fullName: {
-    type: String,
-    required: [false, "please tell us your name"],
-    ref: "User",
-  },
-  // email: {
-  //   type: String,
-  //   require: [false, "please provide an email address"],
-  //   unique: false,
-  //   lowercase: true,
-  // },
   message: {
     type: String,
     required: true,

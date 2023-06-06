@@ -2,34 +2,36 @@ import UserRating from  "../model/rating.model.js"
 import { ratingValidator } from "../validator/rating.validator.js";
 // import { BadUserRequestError } from "../error/error.js";
 
-export default class RatingController {
-  static async feedBack(req, res) {
-    const { error } = feedbackValidator.validate(req.body);
+export default class FeedbackController {
+  static async ratings(req, res) {
+    const { error } = ratingValidator.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.message });
     }
 
-    const feedUser = await UserFeedback.findOne({ email: req.user.email },req.body);
-    console.log(feedUser)
-   
-    if (feedUser) {
-      {message}
+    const { rating } = req.body;
+
+    try {
+      const userId = req.user._id;
+
+      const ratingData = new UserRating({
+        user: userId,
+        rating,
+      });
+
+      await ratingData.save();
+
+      res.status(200).json({
+        message: "User rating sent successfully",
+        status: "Success",
+        data: {
+          ratingData,
+        },
+      });
+
+    } catch (err) {
+      console.error("Error saving rating to the database", err);
+      res.status(500).json({ error: err.message });
     }
-
-    // const { message } = req.body;
-
-    if (!feedUser){
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // const feedback = { message };
-
-    res.status(200).json({
-      message: "Thank you for your feedback!",
-      status: "Success",
-      data: {
-        feedUser,
-      },
-    });
   }
 }
