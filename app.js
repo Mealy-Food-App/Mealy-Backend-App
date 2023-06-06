@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 import { config } from "./src/config/index.js";
 import {router as userRouter} from "./src/router/user.route.js";
 import { globalErrorHandler } from "./src/utils/errorHandler.js";
-import jwt from 'jsonwebtoken'
 import morgan from "morgan";
+import {router as productRouter} from "./src/router/product.route.js";
+import {router as categoryRouter} from "./src/router/home.route.js";
 import passport from "passport";
 import session from "express-session";
 
@@ -35,6 +36,9 @@ app.use(passport.session());
 
 // Routes 
 app.use('/api/mealy/user', userRouter);
+app.use('/api/mealy/product', productRouter);
+app.use('/api/mealy/home', categoryRouter);
+
 
 app.use(globalErrorHandler)
 
