@@ -2,7 +2,7 @@
 import User from "../model/user.model.js";
 import {
   createUserValidator,
-  signinUserValidator,
+  signinUserValidator,passwordEmailValidator, resetPasswordField
 } from "../validator/user.validator.js";
 import { BadUserRequestError } from "../error/error.js";
 import { NotFoundError } from "../error/error.js";
@@ -28,6 +28,33 @@ export default class UserController {
       throw new BadUserRequestError(
         "An account with this email already exists."
       );
+
+      const { email } = req.body;
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: "mealybackend@gmail.com",
+          pass
+            : "cllvzfruzmuvzwai"
+        },
+      });
+      const mailOptions = {
+        from: "mealybackend@gmail.com",
+        to: email,
+        subject: 'Account created',
+        text: `you have successfully sign up with meally app, enjoy your journey with us`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).json({ message: 'Failed to send sign up email' });
+        }
+        console.log('Reset email sent:', info.response);
+        return res.status(200).json({ message: 'sign up email sent' });
+
+      });
+
     const saltRounds = config.bcrypt_salt_round
     const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
 
@@ -89,6 +116,10 @@ export default class UserController {
 
   //forgot pssword
   static async forgotPassword(req, res) {
+    const { error } = passwordEmailValidator.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
     const { email } = req.body;
     //const appEmail = process.env.EMAIL;
     //const password = process.env.PASSWORD;
@@ -136,6 +167,11 @@ export default class UserController {
 
   //confirmtoken
   static async confirmToken(req, res) {
+    // const { error } = verifyCodeValidator.validate(req.body);
+    // if (error) {
+    //   return res.status(400).json({ error: error.message });
+    // }
+
     const { token } = req.body;
 
     try {
@@ -160,6 +196,11 @@ export default class UserController {
 
   // Reset password
   static async resetPassword(req, res) {
+
+    const { error } = resetPasswordField.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
     const { email } = req.body;
 
     try {
