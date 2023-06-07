@@ -2,7 +2,7 @@
 import User from "../model/user.model.js";
 import {
   createUserValidator,
-  signinUserValidator,passwordEmailValidator, resetPasswordField
+  signinUserValidator, passwordEmailValidator, resetPasswordField, verifyCodeValidator
 } from "../validator/user.validator.js";
 import { BadUserRequestError } from "../error/error.js";
 import { NotFoundError } from "../error/error.js";
@@ -29,31 +29,31 @@ export default class UserController {
         "An account with this email already exists."
       );
 
-      const { email } = req.body;
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: "mealybackend@gmail.com",
-          pass
-            : "cllvzfruzmuvzwai"
-        },
-      });
-      const mailOptions = {
-        from: "mealybackend@gmail.com",
-        to: email,
-        subject: 'Account created',
-        text: `you have successfully sign up with meally app, enjoy your journey with us`,
-      };
+    const { email } = req.body;
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: "mealybackend@gmail.com",
+        pass
+          : "cllvzfruzmuvzwai"
+      },
+    });
+    const mailOptions = {
+      from: "mealybackend@gmail.com",
+      to: email,
+      subject: 'Account created',
+      text: `you have successfully sign up with meally app, enjoy your journey with us`,
+    };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          return res.status(500).json({ message: 'Failed to send sign up email' });
-        }
-        console.log('Reset email sent:', info.response);
-        return res.status(200).json({ message: 'sign up email sent' });
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Failed to send sign up email' });
+      }
+      console.log('Reset email sent:', info.response);
+      return res.status(200).json({ message: 'sign up email sent' });
 
-      });
+    });
 
     const saltRounds = config.bcrypt_salt_round
     const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
@@ -167,17 +167,17 @@ export default class UserController {
 
   //confirmtoken
   static async confirmToken(req, res) {
-    // const { error } = verifyCodeValidator.validate(req.body);
-    // if (error) {
-    //   return res.status(400).json({ error: error.message });
-    // }
+    const { error } = verifyCodeValidator.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
 
     const { token } = req.body;
 
     try {
       const userToken = await User.findOne({ token });
       if (!userToken) {
-        return res.status(404).json({ message: 'Invalid or expired token' });
+        return res.status(404).json({ message: 'Token is required' });
       }
 
       if (userToken.expireAt > Date.now()) {
