@@ -1,7 +1,7 @@
 import UserFeedback from "../model/feedback.model.js";
 import { feedbackValidator } from "../validator/feedback.validator.js";
 // import { NotFoundError } from "../error/error.js";
-// import User from "../model/user.model.js";
+import User from "../model/user.model.js";
 
 export default class FeedbackController {
   static async feedBack(req, res) {
@@ -14,6 +14,12 @@ export default class FeedbackController {
 
     try {
       const userId = req.user._id;
+
+      // Check if the user exists in the database
+      const userExists = await User.exists({ _id: userId });
+      if (!userExists) {
+        return res.status(400).json({ error: "User does not exist" });
+      }
 
       const FeedbackData = new UserFeedback({
         fullName: req.user.fullName,
