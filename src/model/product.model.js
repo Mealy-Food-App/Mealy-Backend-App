@@ -16,9 +16,9 @@ const productSchema = new Schema({
         type: String,
     }],
     category: {
-        type: Schema.Types.ObjectId,
+        type: String,
         ref: 'Category',
-        //required: true,
+        required: true,
     },
     isFeatured: {
         type: Boolean,

@@ -34,5 +34,4 @@ router.post('/rating', userAuthMiddleWare, tryCatchHandler (RatingController.rat
 // logout route
 router.get('/logout', logoutController.logOut);
 
-
 export {router};
