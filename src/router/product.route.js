@@ -4,32 +4,32 @@ import Category from '../model/category.model.js';
 
 //Create Product
 const router = express.Router();
-router.post('/addproduct', async (req, res)=> {
-    const category = await Category.findById(req.body.category);
-
-    if(!category) return res.status(400).json('Invalid category')
-    
-    const product = new Product({
-        name: req.body.name,
-        price: req.body.price,
-        description:req.body.description,
-        image: req.body.image,
-        category: req.body.category,
-        isFeatured: req.body.isFeatured
-    })
-
-
-    if (!product) {
-        return res.status(404).json({ status: 'failed', message: 'product not created' })
+router.post('/addProduct', async (req, res) => {
+    const existingProduct = await Product.findOne({ name: req.body.name });
+ 
+    if (existingProduct) {
+      return res.status(409).json({ status: 'failed', message: 'Product already exists' });
     }
-    res.status(200).json({
-        data: product,
-        status: 'success',
-        message: 'Product has been created'
-    })
+ 
+    const product = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description,
+      image: req.body.image,
+      category: req.body.category,
+      isFeatured: req.body.isFeatured
+    });
+ 
+    await product.save();
+ 
+    res.status(201).json({
+      data: product,
+      status: 'success',
+      message: 'Product has been created'
+    });
+  });
 
-    await product.save()
-})
+    
 
 //List Products
 router.get('/products', async (req, res) => {
@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
 
         const product = await Product.findOne({ name });
 
-        if (!product) {
+        if (!product) { 
             res.status(404).json({ message: 'Product not available' })
         }
         res.status(200).json({
