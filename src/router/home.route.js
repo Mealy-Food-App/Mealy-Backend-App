@@ -13,15 +13,19 @@ router.post('/addCategory', async (req, res)=> {
         totalPlaces: req.body.totalPlaces
     })
 
-    if (category) {
-        return res.status(404).json({ status: 'failed', message: 'Category already exists' })
+    const categoryExists = await Category.find({ name: req.body.name });
+    if (!categoryExists){
+        res.status(404).json('Category already exists')
+    }
+
+    if (!category) {
+        return res.status(404).json({ status: 'failed', message: 'Category cannot be create' })
     }
     res.status(200).json({
         data: category,
         status: 'success',
-        message: 'Product has been created'
+        message: 'Category has been created'
     })
-
     await category.save()
 })
 
