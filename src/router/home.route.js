@@ -5,29 +5,28 @@ import express from 'express';
 const router = express.Router()
 
 //Create category
-router.post('/addCategory', async (req, res)=> {
-
+router.post('/addCategory', async (req, res) => {
+    const existingCategory = await Category.findOne({ name: req.body.name });
+ 
+    if (existingCategory) {
+      return res.status(409).json({ status: 'failed', message: 'Category already exists' });
+    }
+ 
     const category = new Category({
-        name: req.body.name,
-        image: req.body.image,
-        totalPlaces: req.body.totalPlaces
-    })
+      name: req.body.name,
+      image: req.body.image,
+      totalPlaces: req.body.totalPlaces
+    });
+ 
+    await category.save();
+ 
+    res.status(201).json({
+      data: category,
+      status: 'success',
+      message: 'Category has been created'
+    });
+  });
 
-    const categoryExists = await Category.find({ name: req.body.name });
-    if (!categoryExists){
-        res.status(404).json('Category already exists')
-    }
-
-    if (!category) {
-        return res.status(404).json({ status: 'failed', message: 'Category cannot be create' })
-    }
-    res.status(200).json({
-        data: category,
-        status: 'success',
-        message: 'Category has been created'
-    })
-    await category.save()
-})
 
 
 router.get('/categories', async (req, res) => {
@@ -67,7 +66,7 @@ router.get('/categories/:categoryName/products', (req, res) => {
 router.get('/filter', async (req, res) => {
     try {
         const { search } = req.query;
-        const query = {};
+        let query = {};
 
         if(search) {
             query = {
@@ -80,11 +79,12 @@ router.get('/filter', async (req, res) => {
         }
         const products = await Product.find(query);
 
-        if(!products || products.length === 0) {
+        if(!products) {
             res.status(404).json('This food is unavailable')
         }
         res.status(201).json(products)
     }catch (error) {
+        console.log(error)
         res.status(500).json({error: 'An error occured'})
     }
 
