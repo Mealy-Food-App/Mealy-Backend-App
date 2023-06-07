@@ -1,5 +1,6 @@
 import UserRating from  "../model/rating.model.js"
 import { ratingValidator } from "../validator/rating.validator.js";
+import User from "../model/user.model.js";
 // import { BadUserRequestError } from "../error/error.js";
 
 export default class FeedbackController {
@@ -13,6 +14,11 @@ export default class FeedbackController {
 
     try {
       const userId = req.user._id;
+
+      const userExists = await User.exists({ _id: userId });
+      if (!userExists) {
+        return res.status(400).json({ error: "User does not exist" });
+      }
 
       const ratingData = new UserRating({
         user: userId,
