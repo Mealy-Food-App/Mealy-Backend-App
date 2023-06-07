@@ -6,6 +6,7 @@ import { globalErrorHandler } from "./src/utils/errorHandler.js";
 import morgan from "morgan";
 import {router as productRouter} from "./src/router/product.route.js";
 import {router as categoryRouter} from "./src/router/home.route.js";
+import {router as filterRouter} from "./src/router/home.route.js";
 import passport from "passport";
 import session from "express-session";
 
@@ -38,6 +39,7 @@ app.use(passport.session());
 app.use('/api/mealy/user', userRouter);
 app.use('/api/mealy/product', productRouter);
 app.use('/api/mealy/home', categoryRouter);
+
 
 
 app.use(globalErrorHandler)

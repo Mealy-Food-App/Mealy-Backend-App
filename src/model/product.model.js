@@ -15,10 +15,10 @@ const productSchema = new Schema({
     images: [{
         type: String,
     }],
-    category: {
-        type: Schema.Types.ObjectId,
+    category: { 
+        type: String,
         ref: 'Category',
-        //required: true,
+        required: true,
     },
     isFeatured: {
         type: Boolean,

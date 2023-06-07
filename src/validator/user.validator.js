@@ -42,13 +42,13 @@ export const passwordEmailValidator = Joi.object({
     }),
 });
 
-// export const verifyCodeValidator = Joi.object({
-//   resetCode: Joi.string().required().min(5).max(5).messages({
-//     // "any.required": "the reset code field cannot be empty",
-//     "string.min": "code cannot be less than 5",
-//     "string.max": "code cannot be more than 5",
-//   }),
-// });
+export const verifyCodeValidator = Joi.object({
+   token: Joi.string().required().min(5).max(5).messages({
+      "required": "the reset code field cannot be empty",
+    "string.min": "code cannot be less than 5",
+    "string.max": "code cannot be more than 5",
+  }),
+});
 
 export const resetPasswordField = Joi.object({
   password: Joi.string()
