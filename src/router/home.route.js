@@ -62,7 +62,7 @@ router.get('/categories/:categoryName/products', (req, res) => {
       .then((products) => {
         res.status(200).json(products);
       })
-      .catch((error) => {
+      .catch((error) => {console.log(error)
         res.status(500).json({ error: 'Internal server error' });
       });
   });

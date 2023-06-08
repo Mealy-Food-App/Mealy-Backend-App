@@ -11,7 +11,11 @@ const categorySchema = new Schema ({
     totalPlaces: {
         type: String,
         required: true
-    }
+    },
+    product: [{
+        type: String,
+        ref: 'Product'
+      }]
 
 })
 

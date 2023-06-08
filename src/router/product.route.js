@@ -15,23 +15,38 @@ router.post('/addProduct', async (req, res) => {
     if (existingProduct) {
       return res.status(409).json({ status: 'failed', message: 'Product already exists' });
     }
- 
+
+    const categoryName = req.body.category;
+
+  try {
+    let category = await Category.findOne({ name: categoryName });
+
+    if (!category) {
+      res.send('Category does not exist, Create one')
+    }
+
     const product = new Product({
       name: req.body.name,
       price: req.body.price,
       description: req.body.description,
       image: req.body.image,
-      category: req.body.category,
+      category: category.name, // Use the name field of the category
       isFeatured: req.body.isFeatured
     });
- 
+
     await product.save();
- 
-    res.status(201).json({
+
+    res.status(200).json({
       data: product,
       status: 'success',
-      message: 'Product has been created'
+      message: 'Product has been created and added to the category'
     });
+  } catch (error) {
+    res.status(500).json({
+      status: 'failed',
+      message: 'An error occurred while adding the product to the category'
+    })
+    }
   });
 
     
