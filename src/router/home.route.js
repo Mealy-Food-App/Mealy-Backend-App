@@ -1,11 +1,17 @@
 import Category from '../model/category.model.js';
 import Product from '../model/product.model.js';
 import express from 'express';
+import { categoryValidator } from "../validator/homepage.validator.js";
 
 const router = express.Router()
 
 //Create category
 router.post('/addCategory', async (req, res) => {
+    const { error } = categoryValidator.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
     const existingCategory = await Category.findOne({ name: req.body.name });
  
     if (existingCategory) {

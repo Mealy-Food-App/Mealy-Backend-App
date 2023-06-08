@@ -1,10 +1,15 @@
 import express from 'express';
 import Product from "../model/product.model.js";
 import Category from '../model/category.model.js';
+import { productValidator } from "../validator/homepage.validator.js"
 
 //Create Product
 const router = express.Router();
 router.post('/addProduct', async (req, res) => {
+    const { error }= productValidator.validate(req.body)
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
     const existingProduct = await Product.findOne({ name: req.body.name });
  
     if (existingProduct) {
