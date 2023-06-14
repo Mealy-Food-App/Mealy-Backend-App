@@ -6,7 +6,7 @@ import FeedbackController from "../controllers/feedback.js";
 import RatingController from "../controllers/rating.js";
 import { userAuthMiddleWare } from "../middlewares/auth.middleware.js";
 import logoutController from "../controllers/logout.js";
-import CartController from "./cart.route.js";
+import CartController from "../controllers/cart.js";
 
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
