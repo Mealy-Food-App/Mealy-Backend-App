@@ -4,9 +4,9 @@ import { cartValidator } from "../validator/cart.validation.js";
 
 export default class CartController {
   static async addToCart(req, res) {
-    const { error }= cartValidator.validate(req.body)
+    const { error } = cartValidator.validate(req.body);
     if (error) {
-        return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
     }
 
     try {
@@ -45,17 +45,22 @@ export default class CartController {
         });
       }
 
+      // Calculate the total amount of the cart
+      let totalAmount = 0;
+      for (const item of cart.items) {
+        const product = await Product.findById(item.productId);
+        totalAmount += product.price * item.quantity;
+      }
+
       // Save the cart
       await cart.save();
 
-      // Send the cart data and product information back to the client
+      // Send the cart data and total amount back to the client
       res.status(200).json({
         status: "success",
         message: "Product added to cart",
         data: cart,
-        productName: product.name,
-        price: product.price,
-        quantity: quantity,
+        totalAmount,
       });
 
     } catch (error) {
