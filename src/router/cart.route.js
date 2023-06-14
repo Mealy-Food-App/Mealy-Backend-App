@@ -1,8 +1,14 @@
 import Cart from "../model/cart.model.js";
 import Product from "../model/product.model.js";
+import { cartValidator } from "../validator/cart.validation.js";
 
 export default class CartController {
   static async addToCart(req, res) {
+    const { error }= cartValidator.validate(req.body)
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
     try {
       const { userId, productName, quantity } = req.body;
 
@@ -51,7 +57,7 @@ export default class CartController {
         price: product.price,
         quantity: quantity,
       });
-      
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server Error" });
