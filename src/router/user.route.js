@@ -6,7 +6,8 @@ import FeedbackController from "../controllers/feedback.js";
 import RatingController from "../controllers/rating.js";
 import { userAuthMiddleWare } from "../middlewares/auth.middleware.js";
 import logoutController from "../controllers/logout.js";
-import CartController from "../controllers/cart.js";
+import CartController from "../controllers/addCart.js";
+import RemoveCartController from "../controllers/removeCart.js";
 
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
@@ -37,5 +38,8 @@ router.get('/logout', logoutController.logOut);
 
 // cart route
 router.post('/cart/add', userAuthMiddleWare, CartController.addToCart);
+router.delete('/cart/remove/:productId', userAuthMiddleWare, RemoveCartController.removeFromCart);
+
+
 
 export {router};

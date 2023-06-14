@@ -4,13 +4,22 @@ import { cartValidator } from "../validator/cart.validation.js";
 
 export default class CartController {
   static async addToCart(req, res) {
+
+    if (!req.user) {
+        return res.status(401).json({
+          status: "failed",
+          message: "Unauthorized",
+        });
+      }
+
     const { error } = cartValidator.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.message });
     }
 
     try {
-      const { userId, productName, quantity } = req.body;
+      const { productName, quantity } = req.body;
+      const userId = req.user._id;
 
       // Find the product by name
       const product = await Product.findOne({ name: productName });
