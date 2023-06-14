@@ -4,13 +4,12 @@ import { cartValidator } from "../validator/cart.validation.js";
 
 export default class CartController {
   static async addToCart(req, res) {
-
     if (!req.user) {
-        return res.status(401).json({
-          status: "failed",
-          message: "Unauthorized",
-        });
-      }
+      return res.status(401).json({
+        status: "failed",
+        message: "Unauthorized",
+      });
+    }
 
     const { error } = cartValidator.validate(req.body);
     if (error) {
@@ -18,7 +17,7 @@ export default class CartController {
     }
 
     try {
-      const { productName, quantity } = req.body;
+      const { productName, quantity, deliveryAddress } = req.body;
       const userId = req.user._id;
 
       // Find the product by name
@@ -35,7 +34,10 @@ export default class CartController {
 
       if (!cart) {
         // If the cart doesn't exist, create a new cart
-        cart = new Cart({ userId, items: [] });
+        cart = new Cart({ userId, items: [], deliveryAddress });
+      } else {
+        // If the cart already exists, update the delivery address
+        cart.deliveryAddress = deliveryAddress;
       }
 
       // Check if the product already exists in the cart
@@ -71,7 +73,6 @@ export default class CartController {
         data: cart,
         totalAmount,
       });
-
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server Error" });

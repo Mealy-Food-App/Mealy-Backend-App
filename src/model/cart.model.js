@@ -25,6 +25,9 @@ const cartSchema = new Schema(
       type: Date,
       ref: "delivery"
     },
+    deliveryAddress: {
+      type: String
+    },
     active: {
       type: Boolean,
       default: true,
