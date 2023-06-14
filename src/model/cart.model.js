@@ -21,6 +21,10 @@ const cartSchema = new Schema(
         },
       },
     ],
+    deliveryDate: {
+      type: Date,
+      ref: "delivery"
+    },
     active: {
       type: Boolean,
       default: true,
