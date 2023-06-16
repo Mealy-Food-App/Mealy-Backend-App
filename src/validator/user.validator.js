@@ -51,6 +51,7 @@ export const verifyCodeValidator = Joi.object({
 });
 
 export const resetPasswordField = Joi.object({
+  email: Joi.string(),
   password: Joi.string()
     .regex(
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/
