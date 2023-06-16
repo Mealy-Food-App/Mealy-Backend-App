@@ -45,11 +45,6 @@ const userSchema = new Schema(
     token: {
       type: String,
     },
-    expireAt: {
-      type: Date,
-      default: Date.now,
-      index: { expires: 3600 },
-    },
   },
   {
     timestamps: true,

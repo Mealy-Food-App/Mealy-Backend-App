@@ -6,6 +6,10 @@ import FeedbackController from "../controllers/feedback.js";
 import RatingController from "../controllers/rating.js";
 import { userAuthMiddleWare } from "../middlewares/auth.middleware.js";
 import logoutController from "../controllers/logout.js";
+import CartController from "../controllers/addCart.js";
+import RemoveCartController from "../controllers/removeCart.js";
+import DeliveryController from "../controllers/scheduleDelivery.js";
+import CheckoutController from "../controllers/checkout.js";
 
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
@@ -33,5 +37,18 @@ router.post('/rating', userAuthMiddleWare, tryCatchHandler (RatingController.rat
 
 // logout route
 router.get('/logout', logoutController.logOut);
+
+// cart route
+router.post('/cart/add', userAuthMiddleWare, CartController.addToCart);
+router.delete('/cart/remove/:productId', userAuthMiddleWare, RemoveCartController.removeFromCart);
+
+// delivery address route
+router.patch('/cart/schedule-delivery', userAuthMiddleWare, DeliveryController.scheduleDelivery);
+
+// order route
+router.post('/checkout', userAuthMiddleWare, CheckoutController.checkout);
+
+
+
 
 export {router};
