@@ -1,28 +1,30 @@
-import express from 'express';
+import express from "express";
 import Product from "../model/product.model.js";
-import Category from '../model/category.model.js';
-import { productValidator } from "../validator/homepage.validator.js"
+import Category from "../model/category.model.js";
+import { productValidator } from "../validator/homepage.validator.js";
 
 //Create Product
 const router = express.Router();
-router.post('/addProduct', async (req, res) => {
-    const { error }= productValidator.validate(req.body)
-    if (error) {
-        return res.status(400).json({ error: error.message });
-    }
-    const existingProduct = await Product.findOne({ name: req.body.name });
- 
-    if (existingProduct) {
-      return res.status(409).json({ status: 'failed', message: 'Product already exists' });
-    }
+router.post("/addProduct", async (req, res) => {
+  const { error } = productValidator.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  const existingProduct = await Product.findOne({ name: req.body.name });
 
-    const categoryName = req.body.category;
+  if (existingProduct) {
+    return res
+      .status(409)
+      .json({ status: "failed", message: "Product already exists" });
+  }
+
+  const categoryName = req.body.category;
 
   try {
     let category = await Category.findOne({ name: categoryName });
 
     if (!category) {
-      res.send('Category does not exist, Create one')
+      res.send("Category does not exist, Create one");
     }
 
     const product = new Product({
@@ -31,98 +33,107 @@ router.post('/addProduct', async (req, res) => {
       description: req.body.description,
       image: req.body.image,
       category: category.name, // Use the name field of the category
-      isFeatured: req.body.isFeatured
+      isFeatured: req.body.isFeatured,
     });
 
     await product.save();
 
+    category.product.push(product._id); // Add the product's _id to the category's product array
+    await category.save();
+
     res.status(200).json({
       data: product,
-      status: 'success',
-      message: 'Product has been created and added to the category'
+      status: "success",
+      message: "Product has been created and added to the category",
     });
   } catch (error) {
     res.status(500).json({
-      status: 'failed',
-      message: 'An error occurred while adding the product to the category'
-    })
-    }
-  });
-
-    
-
-//List Products
-router.get('/products', async (req, res) => {
-    try {
-        const productList = await Product.find();
-
-
-        if (!productList) {
-            res.status(404).json({ message: 'No products yet' })
-        }
-        res.status(200).json({
-            data: productList,
-            status: "success"
-        })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ status: "failed", message: "internal server error" })
-    }
-}
-)
-
-//find a product by name
-router.get('/', async (req, res) => {
-    try {
-        const { name } = req.query;
-
-        const product = await Product.findOne({ name });
-
-        if (!product) { 
-            res.status(404).json({ message: 'Product not available' })
-        }
-        res.status(200).json({
-            data: product,
-            status: "success"
-        })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ status: "failed", message: "internal server error" })
-    }
-}
-)
-
-//update
-router.put('/update/:name', (req, res) => {
-    const { name } = req.params;
-
-    Product.findOneAndUpdate({ name }, req.body)
-    .then(product => {
-        if (product) {
-            return res.status(200).json({ status: 'success', message: 'product has been updated' })
-        }
-        return res.status(400).json({ status: 'failed', message: "product not found" })
-    }).catch(err => {
-        return res.status(400).json({ status: "failed", error: err })
-    })
-})
-
-//delete
-router.delete('/delete/:name', (req, res) => {
-    const { name } = req.params;
-
-    Product.findOneAndRemove({ name }, req.body)
-    .then(product => {
-        if (product) {
-            return res.status(200).json({ status: 'success', message: 'product has been deleted' })
-        }
-        return res.status(400).json({ status: 'failed', message: "product not found" })
-    }).catch(err => {
-        return res.status(400).json({ status: "failed", error: err })
-    })
+      status: "failed",
+      message: "An error occurred while adding the product to the category",
+    });
+  }
 });
 
+//List Products
+router.get("/products", async (req, res) => {
+  try {
+    const productList = await Product.find();
 
-export {router}
+    if (!productList) {
+      res.status(404).json({ message: "No products yet" });
+    }
+    res.status(200).json({
+      data: productList,
+      status: "success",
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ status: "failed", message: "internal server error" });
+  }
+});
+
+//find a product by name
+router.get("/", async (req, res) => {
+  try {
+    const { name } = req.query;
+
+    const product = await Product.findOne({ name });
+
+    if (!product) {
+      res.status(404).json({ message: "Product not available" });
+    }
+    res.status(200).json({
+      data: product,
+      status: "success",
+    });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ status: "failed", message: "internal server error" });
+  }
+});
+
+//update
+router.put("/update/:name", (req, res) => {
+  const { name } = req.params;
+
+  Product.findOneAndUpdate({ name }, req.body)
+    .then((product) => {
+      if (product) {
+        return res
+          .status(200)
+          .json({ status: "success", message: "product has been updated" });
+      }
+      return res
+        .status(400)
+        .json({ status: "failed", message: "product not found" });
+    })
+    .catch((err) => {
+      return res.status(400).json({ status: "failed", error: err });
+    });
+});
+
+//delete
+router.delete("/delete/:name", (req, res) => {
+  const { name } = req.params;
+
+  Product.findOneAndRemove({ name }, req.body)
+    .then((product) => {
+      if (product) {
+        return res
+          .status(200)
+          .json({ status: "success", message: "product has been deleted" });
+      }
+      return res
+        .status(400)
+        .json({ status: "failed", message: "product not found" });
+    })
+    .catch((err) => {
+      return res.status(400).json({ status: "failed", error: err });
+    });
+});
+
+export { router };
