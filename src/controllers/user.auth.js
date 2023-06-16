@@ -212,9 +212,9 @@ export default class UserController {
       const saltRounds = config.bcrypt_salt_round
       const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds);
       user.password = hashedPassword;
-      user.confirmPassword = hashedPassword;
-      await user.save();
 
+      await user.save();
+      
       return res.status(200).json({ message: 'Password reset successful' });
     } catch (error) {
       console.log(error);

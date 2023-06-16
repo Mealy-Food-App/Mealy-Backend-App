@@ -61,7 +61,4 @@ export const resetPasswordField = Joi.object({
       "string.pattern.base":
         "Your password must contain at least one digit, one lowercase letter, one uppercase letter, and one special character. it should be at least 8 characters long",
     }),
-  confirmPassword: Joi.string().required().valid(Joi.ref("password")).messages({
-    "any.only": "Confirm password must be the same as the password",
-  }),
 });
