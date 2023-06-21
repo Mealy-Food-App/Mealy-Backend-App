@@ -47,6 +47,7 @@ export default class CheckoutController {
         items: cart.items,
         deliveryAddress: cart.deliveryAddress,
         totalAmount,
+        deliveryDate: cart.deliveryDate
       });
 
       // Save the order
@@ -60,6 +61,7 @@ export default class CheckoutController {
       res.status(200).json({
         status: "success",
         message: "checkout successful",
+        data: order,
       });
     } catch (error) {
       console.error(error);
