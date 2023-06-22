@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: false,
   },
   items: [
@@ -24,6 +25,10 @@ const orderSchema = new mongoose.Schema({
   totalAmount: {
     type: Number,
     required: true,
+  },
+  deliveryDate: {
+    type: Date,
+    ref: "delivery"
   },
   createdAt: {
     type: Date,

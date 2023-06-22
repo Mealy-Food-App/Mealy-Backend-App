@@ -47,19 +47,21 @@ export default class CheckoutController {
         items: cart.items,
         deliveryAddress: cart.deliveryAddress,
         totalAmount,
+        deliveryDate: cart.deliveryDate
       });
 
       // Save the order
       await order.save();
 
       // Clear the user's cart after successful checkout
-      await Cart.deleteOne({ userId });
+      // await Cart.deleteOne({ userId });
 
       // Redirect the user to the payment page with the order ID
       // res.redirect(`/payment?orderId=${order._id}`);
       res.status(200).json({
         status: "success",
         message: "checkout successful",
+        data: order,
       });
     } catch (error) {
       console.error(error);

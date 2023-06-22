@@ -1,5 +1,5 @@
-import scheduleDelivery from "../model/cart.model.js";
 import Cart from "../model/cart.model.js";
+import { validateDeliveryDate } from "../validator/scheduleDelivery.js";
 
 export default class DeliveryController {
   static async scheduleDelivery(req, res) {
@@ -8,6 +8,15 @@ export default class DeliveryController {
         return res.status(401).json({
           status: "failed",
           message: "Unauthorized",
+        });
+      }
+
+      const { error } = validateDeliveryDate.validate(req.body);
+      if (error) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Invalid delivery date",
+          error: error.details[0].message,
         });
       }
 
