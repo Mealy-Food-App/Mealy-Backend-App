@@ -24,6 +24,10 @@ const productSchema = new Schema({
         type: Boolean,
         default: false,
     },
-});
+},
+{
+    timestamps: true,
+  }
+);
   
   export default model('Product', productSchema);
