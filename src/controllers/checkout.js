@@ -54,7 +54,7 @@ export default class CheckoutController {
       await order.save();
 
       // Clear the user's cart after successful checkout
-      await Cart.deleteOne({ userId });
+      // await Cart.deleteOne({ userId });
 
       // Redirect the user to the payment page with the order ID
       // res.redirect(`/payment?orderId=${order._id}`);
