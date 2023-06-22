@@ -1,7 +1,6 @@
 import Cart from "../model/cart.model.js";
 import Product from "../model/product.model.js";
 import Order from "../model/order.model.js";
-// import { cartValidator } from "../validator/cart.validation.js";
 
 export default class CheckoutController {
 
@@ -23,14 +22,6 @@ export default class CheckoutController {
         return res.status(404).json({
           status: "failed",
           message: "Cart not found",
-        });
-      }
-
-      // Validate the cart or perform any necessary checks before proceeding to checkout
-      if (!isValidForCheckout(cart)) {
-        return res.status(400).json({
-          status: "failed",
-          message: "Cannot proceed to checkout. Please review your cart or delivery details.",
         });
       }
 
@@ -58,6 +49,7 @@ export default class CheckoutController {
 
       // Redirect the user to the payment page with the order ID
       // res.redirect(`/payment?orderId=${order._id}`);
+      
       res.status(200).json({
         status: "success",
         message: "checkout successful",

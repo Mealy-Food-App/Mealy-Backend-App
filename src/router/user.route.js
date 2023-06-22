@@ -10,6 +10,7 @@ import CartController from "../controllers/addCart.js";
 import RemoveCartController from "../controllers/removeCart.js";
 import DeliveryController from "../controllers/scheduleDelivery.js";
 import CheckoutController from "../controllers/checkout.js";
+import OrderController from "../controllers/orderHistory.js";
 
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
@@ -48,6 +49,8 @@ router.patch('/cart/schedule-delivery', userAuthMiddleWare, DeliveryController.s
 // order route
 router.post('/checkout', userAuthMiddleWare, CheckoutController.checkout);
 
+// order history route
+router.get('/orderhistory', userAuthMiddleWare, tryCatchHandler (OrderController.orderHistory));
 
 
 
