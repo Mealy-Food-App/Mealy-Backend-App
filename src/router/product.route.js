@@ -188,6 +188,7 @@ router.post("/addToCategory/:productId", async (req, res) => {
   }
 });
 
+
 // delete a product from a specific category
 router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
   const { productId, categoryId } = req.params;
@@ -216,6 +217,7 @@ router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
         .json({ status: "failed", message: "Product is not in the category" });
     }
 
+
     // Remove the product's ID from the category's product array
     category.product = category.product.filter(
       (id) => id.toString() !== productId
@@ -236,6 +238,7 @@ router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
     });
   }
 });
+
 
 // Update a product's category
 router.put("/updateCategory/:productId", async (req, res) => {
@@ -265,7 +268,6 @@ router.put("/updateCategory/:productId", async (req, res) => {
       { $pull: { product: product._id } }
     );
 
-    // Add the product ID to the new category's product array
     category.product.push(product._id);
 
     // Update the product's category field
