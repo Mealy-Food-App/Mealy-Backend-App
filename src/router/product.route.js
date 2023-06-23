@@ -190,7 +190,7 @@ router.post("/addToCategory/:productId", async (req, res) => {
 
 
 // delete a product from a specific category
-router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
+router.delete("/removeFromCategory/:categoryId/:productId", async (req, res) => {
   const { productId, categoryId } = req.params;
 
   try {
@@ -216,7 +216,6 @@ router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
         .status(404)
         .json({ status: "failed", message: "Product is not in the category" });
     }
-
 
     // Remove the product's ID from the category's product array
     category.product = category.product.filter(
@@ -253,7 +252,6 @@ router.put("/updateCategory/:productId", async (req, res) => {
         .status(404)
         .json({ status: "failed", message: "Product not found" });
     }
-
     const category = await Category.findOne({ name: categoryName });
 
     if (!category) {
@@ -261,7 +259,6 @@ router.put("/updateCategory/:productId", async (req, res) => {
         .status(404)
         .json({ status: "failed", message: "Category not found" });
     }
-
     // Remove the product ID from the old category's product array
     const oldCategory = await Category.findOneAndUpdate(
       { product: product._id },

@@ -1,6 +1,7 @@
 import express from "express";
 import Restaurant from "../model/restaurant.model.js";
 import { createRestaurantValidator } from "../validator/restaurant.validatiion.js";
+import Product from "../model/product.model.js";
 
 const router = express.Router();
 
@@ -52,4 +53,47 @@ router.post("/create/restaurants", async (req, res) => {
   }
 });
 
+
+// Add an existing product to a restaurant
+router.post("/restaurants/addProduct/:restaurantId/products", async (req, res) => {
+
+    try {
+        const { restaurantId } = req.params;
+        const { productName } = req.body;    
+
+      const restaurant = await Restaurant.findById(restaurantId);
+
+      if (!restaurant) {
+        return res.status(404).json({ message: "Restaurant not found" });
+      }
+
+      const product = await Product.findOne({ name: productName });
+
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Check if the product is already associated with the restaurant
+      const isProductAlreadyAdded = restaurant.products.includes(productName);
+
+      if (isProductAlreadyAdded) {
+        return res.status(409).json({
+          message: "Product already added to the restaurant",
+        });
+      }
+
+      restaurant.products.push(productName);
+
+      await restaurant.save();
+
+      res.status(200).json({
+        message: "Product added to the restaurant",
+        data: product,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
 export { router };

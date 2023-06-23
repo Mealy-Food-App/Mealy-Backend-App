@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, mongoose } from "mongoose";
 
 const restaurantSchema = new Schema(
   {
@@ -26,6 +26,10 @@ const restaurantSchema = new Schema(
       type: Number,
       required: true,
     },
+    products: [{
+        type: String,
+        ref: 'Product'
+      }]
   },
   {
     timestamps: true,
