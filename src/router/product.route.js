@@ -137,3 +137,154 @@ router.delete("/delete/:name", (req, res) => {
 });
 
 export { router };
+
+// add same product to another category
+router.post("/addToCategory/:productId", async (req, res) => {
+  const { productId } = req.params;
+  const categoryName = req.body.category;
+
+  try {
+    // Find the product by its ID
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Product not found" });
+    }
+
+    // Find the category by its name
+    const category = await Category.findOne({ name: categoryName });
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Category not found" });
+    }
+
+    // Check if the product is already associated with the category
+    if (category.product.includes(productId)) {
+      return res.status(409).json({
+        status: "failed",
+        message: "Product is already in the category",
+      });
+    }
+
+    // Add the product's ID to the category's product array
+    category.product.push(productId);
+
+    await category.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Product added to the category",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "failed",
+      message: "An error occurred while adding the product to the category",
+    });
+  }
+});
+
+
+// delete a product from a specific category
+router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
+  const { productId, categoryId } = req.params;
+
+  try {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Product not found" });
+    }
+
+    const category = await Category.findById(categoryId);
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Category not found" });
+    }
+
+    // Check if the product is associated with the category
+    if (!category.product.includes(productId)) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Product is not in the category" });
+    }
+
+
+    // Remove the product's ID from the category's product array
+    category.product = category.product.filter(
+      (id) => id.toString() !== productId
+    );
+    await category.save();
+
+    res
+      .status(200)
+      .json({
+        status: "success",
+        message: "Product removed from the category",
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "failed",
+      message: "An error occurred while removing the product from the category",
+    });
+  }
+});
+
+
+// Update a product's category
+router.put("/updateCategory/:productId", async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const categoryName = req.body.category;
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Product not found" });
+    }
+
+    const category = await Category.findOne({ name: categoryName });
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Category not found" });
+    }
+
+    // Remove the product ID from the old category's product array
+    const oldCategory = await Category.findOneAndUpdate(
+      { product: product._id },
+      { $pull: { product: product._id } }
+    );
+
+    category.product.push(product._id);
+
+    // Update the product's category field
+    product.category = category.name;
+
+    // Save the updated product and category
+    await Promise.all([product.save(), oldCategory.save(), category.save()]);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Product category updated",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: "failed",
+      message: "Internal server error",
+    });
+  }
+});
