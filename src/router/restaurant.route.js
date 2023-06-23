@@ -96,4 +96,24 @@ router.post("/restaurants/addProduct/:restaurantId/products", async (req, res) =
     }
   }
 );
+
+
+// Get all restaurants
+router.get("/list/restaurants", async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find();
+
+    res.status(200).json({
+      message: "Restaurant retrieved successfully",
+      data: restaurants,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ status: "failed", message: "Internal server error" });
+  }
+});
+
 export { router };
