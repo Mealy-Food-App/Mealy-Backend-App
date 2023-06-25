@@ -41,9 +41,9 @@ router.post("/create/restaurants", async (req, res) => {
     await restaurant.save();
 
     res.status(201).json({
-      data: restaurant,
       status: "success",
       message: "Restaurant created successfully",
+      data: restaurant,
     });
   } catch (error) {
     console.error(error);
@@ -92,6 +92,7 @@ router.post(
       await restaurant.save();
 
       res.status(200).json({
+        status: "Success",
         message: "Product added to the restaurant",
         data: product,
       });
@@ -126,7 +127,10 @@ router.delete("/restaurants/:restaurantId/products/:productId", async (req, res)
 
     await restaurant.save();
 
-    res.status(200).json({ message: "Product removed from the restaurant" });
+    res.status(200).json({
+      status: "Success",
+      message: "Product removed from the restaurant",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
@@ -141,9 +145,9 @@ router.get("/list/restaurants", async (req, res) => {
     const restaurants = await Restaurant.find();
 
     res.status(200).json({
+      status: "success",
       message: "Restaurant retrieved successfully",
       data: restaurants,
-      status: "success",
     });
   } catch (error) {
     console.error(error);
@@ -152,5 +156,31 @@ router.get("/list/restaurants", async (req, res) => {
       .json({ status: "failed", message: "Internal server error" });
   }
 });
+
+
+// Get a list of products from a restaurant
+router.get("/restaurants/:restaurantId/products", async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+
+    const restaurant = await Restaurant.findById(restaurantId).populate(
+      "products"
+    );
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Retrieved Products of the restaurant successfully",
+      data: restaurant.products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 export { router };
