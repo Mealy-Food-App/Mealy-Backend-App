@@ -209,5 +209,33 @@ router.get("/list/restaurants/:id", async (req, res) => {
   }
 });
 
+// update a restaurant
+router.put("/update/restaurants/:id", async (req, res) => {
 
+  try {
+    const { id }  =  req.params;
+
+    const restaurant = await Restaurant.findByIdAndUpdate(id, req.body,{
+      new: true,
+    });
+    console.log(restaurant)
+
+    if (!restaurant) {
+      return res.status(404)
+      .json({ status: "failed", 
+      message: "Restaurant not found" });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Restaurant updated successfully",
+      data: restaurant,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      status: "error",
+    message: "internal server error"})
+  }
+
+})
 export { router };
