@@ -53,7 +53,6 @@ router.post("/create/restaurants", async (req, res) => {
   }
 });
 
-
 // Add an existing product to a restaurant
 router.post(
   "/restaurants/addProduct/restaurants/:restaurantId/products/:productId",
@@ -104,40 +103,45 @@ router.post(
 );
 
 // Remove a product from a restaurant
-router.delete("/restaurants/:restaurantId/products/:productId", async (req, res) => {
-  try {
-    const { restaurantId, productId } = req.params;
+router.delete(
+  "/restaurants/:restaurantId/products/:productId",
+  async (req, res) => {
+    try {
+      const { restaurantId, productId } = req.params;
 
-    // Find the restaurant by ID
-    const restaurant = await Restaurant.findById(restaurantId);
+      // Find the restaurant by ID
+      const restaurant = await Restaurant.findById(restaurantId);
 
-    if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found" });
+      if (!restaurant) {
+        return res.status(404).json({ message: "Restaurant not found" });
+      }
+
+      // Check if the product exists in the restaurant's products array
+      const productIndex = restaurant.products.findIndex(
+        (id) => id.toString() === productId
+      );
+
+      if (productIndex === -1) {
+        return res
+          .status(404)
+          .json({ message: "Product not found in the restaurant" });
+      }
+
+      // Remove the product from the restaurant's products array
+      restaurant.products.splice(productIndex, 1);
+
+      await restaurant.save();
+
+      res.status(200).json({
+        status: "Success",
+        message: "Product removed from the restaurant",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
     }
-
-    // Check if the product exists in the restaurant's products array
-    const productIndex = restaurant.products.findIndex((id) => id.toString() === productId);
-
-    if (productIndex === -1) {
-      return res.status(404).json({ message: "Product not found in the restaurant" });
-    }
-
-    // Remove the product from the restaurant's products array
-    restaurant.products.splice(productIndex, 1);
-
-    await restaurant.save();
-
-    res.status(200).json({
-      status: "Success",
-      message: "Product removed from the restaurant",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
   }
-});
-
-
+);
 
 // Get all restaurants
 router.get("/list/restaurants", async (req, res) => {
@@ -156,7 +160,6 @@ router.get("/list/restaurants", async (req, res) => {
       .json({ status: "failed", message: "Internal server error" });
   }
 });
-
 
 // Get a list of products from a restaurant
 router.get("/restaurants/:restaurantId/products", async (req, res) => {
@@ -181,7 +184,6 @@ router.get("/restaurants/:restaurantId/products", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 // Get a specific restaurant by ID
 router.get("/list/restaurants/:id", async (req, res) => {
@@ -211,19 +213,18 @@ router.get("/list/restaurants/:id", async (req, res) => {
 
 // update a restaurant
 router.put("/update/restaurants/:id", async (req, res) => {
-
   try {
-    const { id }  =  req.params;
+    const { id } = req.params;
 
-    const restaurant = await Restaurant.findByIdAndUpdate(id, req.body,{
+    const restaurant = await Restaurant.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    console.log(restaurant)
+    console.log(restaurant);
 
     if (!restaurant) {
-      return res.status(404)
-      .json({ status: "failed", 
-      message: "Restaurant not found" });
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Restaurant not found" });
     }
     res.status(200).json({
       status: "success",
@@ -232,10 +233,36 @@ router.put("/update/restaurants/:id", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ 
+    res.status(500).json({
       status: "error",
-    message: "internal server error"})
+      message: "internal server error",
+    });
   }
+});
 
-})
+// delete a restaurant
+router.delete("/delete/restaurants/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const restaurant = await Restaurant.findByIdAndDelete(id);
+
+    if (!restaurant) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Restaurant not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Restaurant deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: "internal server error",
+    });
+  }
+});
 export { router };
