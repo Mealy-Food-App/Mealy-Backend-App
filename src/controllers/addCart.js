@@ -20,7 +20,6 @@ export default class CartController {
       const { productName, quantity, deliveryAddress } = req.body;
       const userId = req.user._id;
 
-      // Find the product by name
       const product = await Product.findOne({ name: productName });
       if (!product) {
         return res.status(404).json({
@@ -29,11 +28,9 @@ export default class CartController {
         });
       }
 
-      // Find the user's cart
       let cart = await Cart.findOne({ userId });
 
       if (!cart) {
-        // If the cart doesn't exist, create a new cart
         cart = new Cart({ userId, items: [], deliveryAddress });
       } else {
         // If the cart already exists, update the delivery address
@@ -63,10 +60,8 @@ export default class CartController {
         totalAmount += product.price * item.quantity;
       }
 
-      // Save the cart
       await cart.save();
 
-      // Send the cart data and total amount back to the client
       res.status(200).json({
         status: "success",
         message: "Product added to cart",
