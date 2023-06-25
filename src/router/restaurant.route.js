@@ -55,11 +55,11 @@ router.post("/create/restaurants", async (req, res) => {
 
 
 // Add an existing product to a restaurant
-router.post("/restaurants/addProduct/:restaurantId/products", async (req, res) => {
-
+router.post(
+  "/restaurants/addProduct/restaurants/:restaurantId/products/:productId",
+  async (req, res) => {
     try {
-        const { restaurantId } = req.params;
-        const { productName } = req.body;    
+      const { restaurantId, productId } = req.params;
 
       const restaurant = await Restaurant.findById(restaurantId);
 
@@ -67,14 +67,19 @@ router.post("/restaurants/addProduct/:restaurantId/products", async (req, res) =
         return res.status(404).json({ message: "Restaurant not found" });
       }
 
-      const product = await Product.findOne({ name: productName });
+      const product = await Product.findById(productId);
 
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
 
+      // Check if the restaurant has a products array
+      if (!restaurant.products) {
+        restaurant.products = [];
+      }
+
       // Check if the product is already associated with the restaurant
-      const isProductAlreadyAdded = restaurant.products.includes(productName);
+      const isProductAlreadyAdded = restaurant.products.includes(productId);
 
       if (isProductAlreadyAdded) {
         return res.status(409).json({
@@ -82,7 +87,7 @@ router.post("/restaurants/addProduct/:restaurantId/products", async (req, res) =
         });
       }
 
-      restaurant.products.push(productName);
+      restaurant.products.push(productId);
 
       await restaurant.save();
 
@@ -96,6 +101,38 @@ router.post("/restaurants/addProduct/:restaurantId/products", async (req, res) =
     }
   }
 );
+
+// Remove a product from a restaurant
+router.delete("/restaurants/:restaurantId/products/:productId", async (req, res) => {
+  try {
+    const { restaurantId, productId } = req.params;
+
+    // Find the restaurant by ID
+    const restaurant = await Restaurant.findById(restaurantId);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // Check if the product exists in the restaurant's products array
+    const productIndex = restaurant.products.findIndex((id) => id.toString() === productId);
+
+    if (productIndex === -1) {
+      return res.status(404).json({ message: "Product not found in the restaurant" });
+    }
+
+    // Remove the product from the restaurant's products array
+    restaurant.products.splice(productIndex, 1);
+
+    await restaurant.save();
+
+    res.status(200).json({ message: "Product removed from the restaurant" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 
 // Get all restaurants

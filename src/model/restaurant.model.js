@@ -27,9 +27,9 @@ const restaurantSchema = new Schema(
       required: true,
     },
     products: [{
-        type: String,
-        ref: 'Product'
-      }]
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    }]
   },
   {
     timestamps: true,

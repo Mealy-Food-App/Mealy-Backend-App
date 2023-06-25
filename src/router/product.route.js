@@ -144,7 +144,6 @@ router.post("/addToCategory/:productId", async (req, res) => {
   const categoryName = req.body.category;
 
   try {
-    // Find the product by its ID
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -153,7 +152,6 @@ router.post("/addToCategory/:productId", async (req, res) => {
         .json({ status: "failed", message: "Product not found" });
     }
 
-    // Find the category by its name
     const category = await Category.findOne({ name: categoryName });
 
     if (!category) {
