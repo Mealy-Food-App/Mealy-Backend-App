@@ -183,4 +183,31 @@ router.get("/restaurants/:restaurantId/products", async (req, res) => {
 });
 
 
+// Get a specific restaurant by ID
+router.get("/list/restaurants/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const restaurant = await Restaurant.findById(id);
+
+    if (!restaurant) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Restaurant not found" });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Restaurant retrieved successfully",
+      data: restaurant,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ status: "failed", message: "Internal server error" });
+  }
+});
+
+
 export { router };
