@@ -213,6 +213,14 @@ router.get("/list/restaurants/:id", async (req, res) => {
 
 // update a restaurant
 router.put("/update/restaurants/:id", async (req, res) => {
+  const existingRestaurant = await Restaurant.findOne({ name: req.body.name });
+
+  if (existingRestaurant) {
+    return res
+      .status(409)
+      .json({ status: "failed", message: "Restaurant already exists" });
+  }
+
   try {
     const { id } = req.params;
 
