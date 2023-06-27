@@ -10,6 +10,7 @@ import {router as filterRouter} from "./src/router/home.route.js";
 import passport from "passport";
 import session from "express-session";
 import {router as restaurantRouter} from "./src/router/restaurant.route.js";
+import {router as paymentRouter} from "./src/controllers/paymentMethod.js";
 
 const app = express();
 
@@ -41,7 +42,7 @@ app.use('/api/mealy/user', userRouter);
 app.use('/api/mealy/product', productRouter);
 app.use('/api/mealy/home', categoryRouter);
 app.use('/api/mealy/home', restaurantRouter);
-
+app.use('/api/mealy/user', paymentRouter);
 
 
 app.use(globalErrorHandler)
