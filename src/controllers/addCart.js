@@ -54,11 +54,18 @@ export default class CartController {
       }
 
       // Calculate the total amount of the cart
-      let totalAmount = 0;
+      let cartAmount = 0;
       for (const item of cart.items) {
         const product = await Product.findById(item.productId);
-        totalAmount += product.price * item.quantity;
+        cartAmount += product.price * item.quantity;
       }
+
+      const deliveryCharge = 700
+      const totalAmount = cartAmount + deliveryCharge
+
+      cart.cartAmount = cartAmount;
+      cart.deliveryCharge = deliveryCharge;
+      cart.totalAmount = totalAmount;
 
       await cart.save();
 
@@ -66,7 +73,6 @@ export default class CartController {
         status: "success",
         message: "Product added to cart",
         data: cart,
-        totalAmount,
       });
     } catch (error) {
       console.error(error);

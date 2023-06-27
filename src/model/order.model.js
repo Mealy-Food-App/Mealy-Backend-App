@@ -23,6 +23,14 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  cartAmount:{
+    type: Number,
+    required: false,
+  },
+  deliveryCharge: {
+    type: Number,
+    required: false,
+  },
   totalAmount: {
     type: Number,
     required: true,
@@ -34,6 +42,10 @@ const orderSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  orderId: {
+    type: String,
+    required: true,
   },
 });
 

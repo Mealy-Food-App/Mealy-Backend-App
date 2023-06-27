@@ -33,21 +33,27 @@ export default class CheckoutController {
       }
 
       // Calculate the total amount of the cart
-      let totalAmount = 0;
+      let cartAmount = 0;
       for (const item of cart.items) {
         const product = await Product.findById(item.productId);
-        totalAmount += product.price * item.quantity;
+        cartAmount += product.price * item.quantity;
       }
+
+      const orderId = 'Mealy'+ generateOrderId();
+
+      const deliveryCharge = cart.deliveryCharge
+      const totalAmount = cartAmount + deliveryCharge
 
       const order = new Order({
         userId,
         items: cart.items,
         deliveryAddress: cart.deliveryAddress,
+        cartAmount,
+        deliveryCharge,
         totalAmount,
         deliveryDate: cart.deliveryDate,
+        orderId,
       });
-
-      const orderId = 'Mealy'+ generateOrderId();
 
       function generateOrderId() {
         // Generate a unique order ID using UUID
@@ -57,19 +63,16 @@ export default class CheckoutController {
 
       await order.save();
 
-      res.redirect("/payment-methods");
+      // res.redirect("/payment-methods");
 
       // Clear the user's cart after successful checkout
       // await Cart.deleteOne({ userId });
 
-      // res.status(200).json({
-      //   status: "success",
-      //   message: "checkout successful",
-      //   data: {
-      //     order,
-      //     orderId,
-      //   },
-      // });
+      res.status(200).json({
+        status: "success",
+        message: "checkout successful",
+        data: order
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server Error" });
