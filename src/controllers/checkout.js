@@ -1,9 +1,9 @@
 import Cart from "../model/cart.model.js";
 import Product from "../model/product.model.js";
 import Order from "../model/order.model.js";
+import shortid from 'shortid';
 
 export default class CheckoutController {
-
   static async checkout(req, res) {
     if (!req.user) {
       return res.status(401).json({
@@ -15,7 +15,6 @@ export default class CheckoutController {
     try {
       const userId = req.user._id;
 
-      // Find the user's cart
       const cart = await Cart.findOne({ userId });
 
       if (!cart) {
@@ -25,35 +24,54 @@ export default class CheckoutController {
         });
       }
 
-      // Calculate the total amount of the cart
-      let totalAmount = 0;
-      for (const item of cart.items) {
-        const product = await Product.findById(item.productId);
-        totalAmount += product.price * item.quantity;
+      // Validate the cart for checkout
+      if (!isValidForCheckout(cart)) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Invalid cart for checkout",
+        });
       }
 
-      // Create a new order
+      // Calculate the total amount of the cart
+      let cartAmount = 0;
+      for (const item of cart.items) {
+        const product = await Product.findById(item.productId);
+        cartAmount += product.price * item.quantity;
+      }
+
+      const orderId = 'Mealy'+ generateOrderId();
+
+      const deliveryCharge = cart.deliveryCharge
+      const totalAmount = cartAmount + deliveryCharge
+
       const order = new Order({
         userId,
         items: cart.items,
         deliveryAddress: cart.deliveryAddress,
+        cartAmount,
+        deliveryCharge,
         totalAmount,
-        deliveryDate: cart.deliveryDate
+        deliveryDate: cart.deliveryDate,
+        orderId,
       });
 
-      // Save the order
+      function generateOrderId() {
+        // Generate a unique order ID using UUID
+        const orderId = shortid.generate();
+        return orderId;
+      }
+
       await order.save();
+
+      // res.redirect("/payment-methods");
 
       // Clear the user's cart after successful checkout
       // await Cart.deleteOne({ userId });
 
-      // Redirect the user to the payment page with the order ID
-      // res.redirect(`/payment?orderId=${order._id}`);
-      
       res.status(200).json({
         status: "success",
         message: "checkout successful",
-        data: order,
+        data: order
       });
     } catch (error) {
       console.error(error);
@@ -61,7 +79,6 @@ export default class CheckoutController {
     }
   }
 }
-
 
 function isValidForCheckout(cart) {
   // validation logic here
