@@ -1,7 +1,8 @@
 import Cart from "../model/cart.model.js";
 import Product from "../model/product.model.js";
 import Order from "../model/order.model.js";
-import shortid from 'shortid';
+import shortid from "shortid";
+
 
 export default class CheckoutController {
   static async checkout(req, res) {
@@ -39,10 +40,11 @@ export default class CheckoutController {
         cartAmount += product.price * item.quantity;
       }
 
-      const orderId = 'Mealy'+ generateOrderId();
+      const orderId = "Mealy" + generateOrderId();
 
-      const deliveryCharge = cart.deliveryCharge
-      const totalAmount = cartAmount + deliveryCharge
+      let discountAmount = cart.discountAmount;
+      const deliveryCharge = cart.deliveryCharge;
+      const totalAmount = cartAmount + deliveryCharge - discountAmount;
 
       const order = new Order({
         userId,
@@ -50,6 +52,7 @@ export default class CheckoutController {
         deliveryAddress: cart.deliveryAddress,
         cartAmount,
         deliveryCharge,
+        discountAmount,
         totalAmount,
         deliveryDate: cart.deliveryDate,
         orderId,
@@ -63,16 +66,16 @@ export default class CheckoutController {
 
       await order.save();
 
-      // res.redirect("/payment-methods");
+      res.redirect("/payment-methods");
 
       // Clear the user's cart after successful checkout
       // await Cart.deleteOne({ userId });
 
-      res.status(200).json({
-        status: "success",
-        message: "checkout successful",
-        data: order
-      });
+      // res.status(200).json({
+      //   status: "success",
+      //   message: "checkout successful",
+      //   data: order
+      // });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server Error" });

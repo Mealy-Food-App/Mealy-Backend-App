@@ -6,6 +6,7 @@ export const productValidator =  Joi.object({
   description: Joi.string(),
   image: Joi.array().items(Joi.string()),
   category: Joi.string().required(),
+  mealOfTheDay: Joi.boolean().required(),
   isFeatured: Joi.boolean().default(false),
 });
 
