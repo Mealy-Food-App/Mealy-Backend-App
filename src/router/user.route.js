@@ -11,6 +11,7 @@ import RemoveCartController from "../controllers/removeCart.js";
 import DeliveryController from "../controllers/scheduleDelivery.js";
 import CheckoutController from "../controllers/checkout.js";
 import OrderController from "../controllers/orderHistory.js";
+import CouponController from "../controllers/coupon.controller.js";
 
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
@@ -52,6 +53,8 @@ router.post('/checkout', userAuthMiddleWare, CheckoutController.checkout);
 // order history route
 router.get('/orderhistory', userAuthMiddleWare, tryCatchHandler (OrderController.orderHistory));
 
+// coupon routes
+router.post('/createCoupons', CouponController.createCoupon);
 
 
 export {router};

@@ -31,6 +31,10 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  discountAmount: {
+    type: Number,
+    required: false,
+  },
   totalAmount: {
     type: Number,
     required: true,
