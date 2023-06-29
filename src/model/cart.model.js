@@ -28,6 +28,22 @@ const cartSchema = new Schema(
     deliveryAddress: {
       type: String
     },
+      couponCode: {
+        type: String,
+        required: false,
+      },
+    cartAmount:{
+      type: Number,
+      required: false,
+    },
+    deliveryCharge: {
+      type: Number,
+      required: false,
+    },
+    discountAmount: {
+      type: Number,
+      required: false,
+    },
     totalAmount: {
       type: Number,
       required: false,

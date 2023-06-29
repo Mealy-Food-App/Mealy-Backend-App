@@ -32,7 +32,8 @@ router.post("/addProduct", async (req, res) => {
       price: req.body.price,
       description: req.body.description,
       image: req.body.image,
-      category: category.name, // Use the name field of the category
+      category: category.name,
+      mealOfTheDay: req.body.mealOfTheDay,
       isFeatured: req.body.isFeatured,
     });
 
@@ -144,7 +145,6 @@ router.post("/addToCategory/:productId", async (req, res) => {
   const categoryName = req.body.category;
 
   try {
-    // Find the product by its ID
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -153,7 +153,6 @@ router.post("/addToCategory/:productId", async (req, res) => {
         .json({ status: "failed", message: "Product not found" });
     }
 
-    // Find the category by its name
     const category = await Category.findOne({ name: categoryName });
 
     if (!category) {
@@ -190,7 +189,7 @@ router.post("/addToCategory/:productId", async (req, res) => {
 
 
 // delete a product from a specific category
-router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
+router.delete("/removeFromCategory/:categoryId/:productId", async (req, res) => {
   const { productId, categoryId } = req.params;
 
   try {
@@ -216,7 +215,6 @@ router.delete("/removeFromCategory/:categoryId/:name", async (req, res) => {
         .status(404)
         .json({ status: "failed", message: "Product is not in the category" });
     }
-
 
     // Remove the product's ID from the category's product array
     category.product = category.product.filter(
@@ -253,7 +251,6 @@ router.put("/updateCategory/:productId", async (req, res) => {
         .status(404)
         .json({ status: "failed", message: "Product not found" });
     }
-
     const category = await Category.findOne({ name: categoryName });
 
     if (!category) {
@@ -261,7 +258,6 @@ router.put("/updateCategory/:productId", async (req, res) => {
         .status(404)
         .json({ status: "failed", message: "Category not found" });
     }
-
     // Remove the product ID from the old category's product array
     const oldCategory = await Category.findOneAndUpdate(
       { product: product._id },
