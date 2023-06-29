@@ -14,9 +14,13 @@ export const createRestaurantValidator = Joi.object({
     'any.required': 'Description is required',
     'string.empty': 'Description is required',
   }),
-  rating: Joi.number().required().messages({
+  specialty: Joi.string().required().messages({
+    'any.required': 'Specialty is required',
+    'string.empty': 'SPecialty is required',
+  }),
+  rating: Joi.number().required().min(1).max(5).messages({
     'any.required': 'Rating is required',
-    'number.base': 'Rating must be a number',
+    'number.base': 'Rating must be a number and not less than 1 and more than 5',
   }),
   distance: Joi.number().required().messages({
     'any.required': 'Distance is required',

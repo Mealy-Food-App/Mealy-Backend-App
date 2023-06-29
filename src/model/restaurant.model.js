@@ -14,6 +14,10 @@ const restaurantSchema = new Schema(
       type: String,
       required: true,
     },
+    specialty: {
+      type: String,
+      required: true,
+    },
     rating: {
       type: Number,
       required: false,
@@ -26,10 +30,24 @@ const restaurantSchema = new Schema(
       type: Number,
       required: true,
     },
-    products: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product'
-    }]
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+    location: [
+      {
+        latitude: {
+          type: Number,
+          required: true,
+        },
+        longitude: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
