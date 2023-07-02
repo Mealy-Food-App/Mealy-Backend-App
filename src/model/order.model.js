@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: false,
+    required: true,
   },
   items: [
     {
@@ -49,6 +49,12 @@ const orderSchema = new mongoose.Schema({
   },
   orderId: {
     type: String,
+    required: true,
+  },
+  orderStatus: {
+    type: String,
+    enum: ['pending', 'paid', 'canceled'],
+    default: 'pending',
     required: true,
   },
 });

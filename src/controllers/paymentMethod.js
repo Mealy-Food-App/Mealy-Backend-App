@@ -15,12 +15,14 @@ router.get("/payment-methods", userAuthMiddleWare, (req, res) => {
     data: paymentMethods,
   });
 });
+
+
 // paystack payment method
-router.get("/payment-methods/paystack", async (req, res) => {
+router.post("/payment-methods/paystack/acceptPayment", async (req, res) => {
   try {
     const params = JSON.stringify({
-      "email": req.body.email,
-      "amount": req.body.totalAmount * 100,
+      email: req.body.email,
+      amount: req.body.totalAmount * 100,
     });
     //   console.log(params);
 
@@ -54,7 +56,41 @@ router.get("/payment-methods/paystack", async (req, res) => {
 
     reqPaystack.write(params);
     reqPaystack.end();
-    
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+
+// verify payment method
+router.get("/payment-methods/paystack/verifyPayment", async (req, res) => {
+  try {
+    const options = {
+      hostname: "api.paystack.co",
+      port: 443,
+      path: "/transaction/verify/:nrpqh0flnb",
+      method: "GET",
+      headers: {
+        Authorization: process.env.PAYSTACKSECRET_KEY,
+      },
+    };
+
+    https.request(options, (resPaystack) => {
+        let data = "";
+
+        resPaystack.on("data", (chunk) => {
+          data += chunk;
+        });
+
+        resPaystack.on("end", () => {
+          console.log(JSON.parse(data));
+        });
+      })
+      .on("error", (error) => {
+        console.error(error);
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });

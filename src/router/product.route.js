@@ -2,6 +2,9 @@ import express from "express";
 import Product from "../model/product.model.js";
 import Category from "../model/category.model.js";
 import { productValidator } from "../validator/homepage.validator.js";
+import upload from "../middlewares/upload.js";
+import {uploadToCloudinary, removeFromCloudinary} from "../service/cloudinary.js";
+
 
 //Create Product
 const router = express.Router();
@@ -54,6 +57,75 @@ router.post("/addProduct", async (req, res) => {
     });
   }
 });
+
+
+// Upload product Image
+router.post("/image/:id", upload.single("image"), async (req, res) => {
+  try {
+    const data = await uploadToCloudinary(req.file.path, "mealyProduct-images");
+
+    if(!data){
+      return res.status(400).json({
+        status: "failed",
+        message: "An error occurred while uploading the image",
+      });
+    }
+
+    //Save Image and publiId to the database
+    const savedImg = await Product.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          image: data.image,
+          publicId: data.public_id,
+        },
+      }
+    );
+
+    res.status(200).json({
+      data: data,
+      status: "success",
+      message: "product image uploaded with success!",
+    });
+    // res.status(200).send("user image uploaded with success!");
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
+
+
+// Delete User Image
+router.delete("/image/:id", async (req, res) => {
+  try {
+    //Find user
+    const product = await Product.findOne({ _id: req.params.id });
+
+    const publicId = product.publicId;
+
+    await removeFromCloudinary(publicId);
+
+    const deleteImg = await Product.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          image: "",
+          publicId: "",
+        },
+      }
+    );
+    res.status(200).json({
+      data: product,
+      status: "success",
+      message: "product image deleted with success!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
+
+
 
 //List Products
 router.get("/products", async (req, res) => {
