@@ -18,6 +18,9 @@ const productSchema = new Schema(
         type: String,
       },
     ],
+    publicId: {
+      type: String,
+    },
     category: {
       type: String,
       ref: "Category",
