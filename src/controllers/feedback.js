@@ -15,7 +15,6 @@ export default class FeedbackController {
     try {
       const userId = req.user._id;
 
-      // Check if the user exists in the database
       const userExists = await User.exists({ _id: userId });
       if (!userExists) {
         return res.status(400).json({ error: "User does not exist" });

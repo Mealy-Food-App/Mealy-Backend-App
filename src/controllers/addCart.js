@@ -63,7 +63,7 @@ export default class CartController {
 
       const deliveryCharge = 700;
       let totalAmount = cartAmount + deliveryCharge;
-      let discountAmount = 0;
+      let couponDiscount = 0;
 
       let coupon = null;
       if (couponCode) {
@@ -91,10 +91,10 @@ export default class CartController {
         }
 
         if (coupon.type === "percentage") {
-          discountAmount = (coupon.value / 100) * cartAmount;
-          totalAmount -= discountAmount;
+          couponDiscount = (coupon.value / 100) * cartAmount;
+          totalAmount -= couponDiscount;
         } else if (coupon.type === "fixed") {
-          discountAmount = coupon.value;
+          couponDiscount = coupon.value;
           totalAmount -= coupon.value;
         }
       }
@@ -103,7 +103,7 @@ export default class CartController {
       cart.deliveryCharge = deliveryCharge;
       cart.totalAmount = totalAmount;
       cart.couponCode = couponCode;
-      cart.discountAmount = discountAmount;
+      cart.couponDiscount = couponDiscount;
 
       await cart.save();
 

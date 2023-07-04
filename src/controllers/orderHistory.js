@@ -12,7 +12,6 @@ export default class OrderController {
     try {
       const userId = req.user._id;
 
-      // Find the user's orders
       const orders = await OrderHistory.find({ userId })
         .populate("items.productId") // Populate the product details
         .sort({ createdAt: -1 });

@@ -42,9 +42,9 @@ export default class CheckoutController {
 
       const orderId = "Mealy" + generateOrderId();
 
-      let discountAmount = cart.discountAmount;
+      let couponDiscount = cart.couponDiscount;
       const deliveryCharge = cart.deliveryCharge;
-      const totalAmount = cartAmount + deliveryCharge - discountAmount;
+      const totalAmount = cartAmount + deliveryCharge - couponDiscount;
 
       const order = new Order({
         userId,
@@ -52,7 +52,7 @@ export default class CheckoutController {
         deliveryAddress: cart.deliveryAddress,
         cartAmount,
         deliveryCharge,
-        discountAmount,
+        couponDiscount,
         totalAmount,
         deliveryDate: cart.deliveryDate,
         orderId,

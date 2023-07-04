@@ -5,6 +5,7 @@ import Product from "../model/product.model.js";
 
 const router = express.Router();
 
+
 // Create a new restaurant
 router.post("/create/restaurants", async (req, res) => {
   const { error } = createRestaurantValidator.validate(req.body);
@@ -55,6 +56,7 @@ router.post("/create/restaurants", async (req, res) => {
   }
 });
 
+
 // Add an existing product to a restaurant
 router.post(
   "/restaurants/addProduct/restaurants/:restaurantId/products/:productId",
@@ -104,6 +106,7 @@ router.post(
   }
 );
 
+
 // Remove a product from a restaurant
 router.delete(
   "/restaurants/:restaurantId/products/:productId",
@@ -111,7 +114,6 @@ router.delete(
     try {
       const { restaurantId, productId } = req.params;
 
-      // Find the restaurant by ID
       const restaurant = await Restaurant.findById(restaurantId);
 
       if (!restaurant) {
@@ -145,6 +147,7 @@ router.delete(
   }
 );
 
+
 // Get all restaurants
 router.get("/list/restaurants", async (req, res) => {
   try {
@@ -162,6 +165,7 @@ router.get("/list/restaurants", async (req, res) => {
       .json({ status: "failed", message: "Internal server error" });
   }
 });
+
 
 // Get a list of products from a restaurant
 router.get("/restaurants/:restaurantId/products", async (req, res) => {
@@ -186,6 +190,7 @@ router.get("/restaurants/:restaurantId/products", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 // Get a specific restaurant by ID
 router.get("/list/restaurants/:id", async (req, res) => {
@@ -212,6 +217,7 @@ router.get("/list/restaurants/:id", async (req, res) => {
       .json({ status: "failed", message: "Internal server error" });
   }
 });
+
 
 // update a restaurant
 router.put("/update/restaurants/:id", async (req, res) => {
@@ -249,6 +255,7 @@ router.put("/update/restaurants/:id", async (req, res) => {
     });
   }
 });
+
 
 // delete a restaurant
 router.delete("/delete/restaurants/:id", async (req, res) => {

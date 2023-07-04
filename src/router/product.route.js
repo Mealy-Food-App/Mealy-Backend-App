@@ -71,7 +71,6 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
       });
     }
 
-    //Save Image and publiId to the database
     const savedImg = await Product.updateOne(
       { _id: req.params.id },
       {
@@ -87,7 +86,6 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
       status: "success",
       message: "product image uploaded with success!",
     });
-    // res.status(200).send("user image uploaded with success!");
   } catch (error) {
     console.log(error);
     res.status(400).send(error);
@@ -98,7 +96,6 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
 // Delete User Image
 router.delete("/image/:id", async (req, res) => {
   try {
-    //Find user
     const product = await Product.findOne({ _id: req.params.id });
 
     const publicId = product.publicId;
@@ -126,7 +123,6 @@ router.delete("/image/:id", async (req, res) => {
 });
 
 
-
 //List Products
 router.get("/products", async (req, res) => {
   try {
@@ -146,6 +142,7 @@ router.get("/products", async (req, res) => {
       .json({ status: "failed", message: "internal server error" });
   }
 });
+
 
 //find a product by name
 router.get("/", async (req, res) => {
@@ -169,6 +166,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 //update
 router.put("/update/:name", (req, res) => {
   const { name } = req.params;
@@ -188,6 +186,7 @@ router.put("/update/:name", (req, res) => {
       return res.status(400).json({ status: "failed", error: err });
     });
 });
+
 
 //delete
 router.delete("/delete/:name", (req, res) => {
@@ -211,6 +210,7 @@ router.delete("/delete/:name", (req, res) => {
 
 export { router };
 
+
 // add same product to another category
 router.post("/addToCategory/:productId", async (req, res) => {
   const { productId } = req.params;
@@ -233,7 +233,6 @@ router.post("/addToCategory/:productId", async (req, res) => {
         .json({ status: "failed", message: "Category not found" });
     }
 
-    // Check if the product is already associated with the category
     if (category.product.includes(productId)) {
       return res.status(409).json({
         status: "failed",
@@ -281,7 +280,6 @@ router.delete("/removeFromCategory/:categoryId/:productId", async (req, res) => 
         .json({ status: "failed", message: "Category not found" });
     }
 
-    // Check if the product is associated with the category
     if (!category.product.includes(productId)) {
       return res
         .status(404)

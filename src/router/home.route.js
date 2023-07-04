@@ -5,6 +5,7 @@ import { categoryValidator } from "../validator/homepage.validator.js";
 
 const router = express.Router()
 
+
 //Create category
 router.post('/addCategory', async (req, res) => {
     const { error } = categoryValidator.validate(req.body);
@@ -34,7 +35,6 @@ router.post('/addCategory', async (req, res) => {
   });
 
 
-
 router.get('/categories', async (req, res) => {
     try {
         const categoryList = await Category.find();
@@ -53,6 +53,7 @@ router.get('/categories', async (req, res) => {
     }
 }
 )
+
 
 //list products in a category
 router.get('/categories/:categoryName/products', (req, res) => {
@@ -97,8 +98,8 @@ router.get('/filter', async (req, res) => {
 }
 )
 
-//update
 
+//update
 router.put('/update/:name', (req, res) => {
     const { name } = req.params;
 
@@ -111,6 +112,7 @@ router.put('/update/:name', (req, res) => {
         return res.status(400).json({ status: "failed", error: err })
     })
 })
+
 
 //delete
 router.delete('/delete/:name', (req, res) => {
