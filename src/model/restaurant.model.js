@@ -4,7 +4,9 @@ const restaurantSchema = new Schema(
   {
     image: {
       type: String,
-      required: false,
+    },
+    publicId: {
+      type: String,
     },
     name: {
       type: String,

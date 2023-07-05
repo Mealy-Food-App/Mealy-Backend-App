@@ -93,7 +93,7 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
 });
 
 
-// Delete User Image
+// Delete product Image
 router.delete("/image/:id", async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id });

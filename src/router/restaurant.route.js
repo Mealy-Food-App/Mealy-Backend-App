@@ -2,6 +2,8 @@ import express from "express";
 import Restaurant from "../model/restaurant.model.js";
 import { createRestaurantValidator } from "../validator/restaurant.validatiion.js";
 import Product from "../model/product.model.js";
+import upload from "../middlewares/upload.js";
+import {uploadToCloudinary, removeFromCloudinary} from "../service/cloudinary.js";
 
 const router = express.Router();
 
@@ -53,6 +55,70 @@ router.post("/create/restaurants", async (req, res) => {
     res
       .status(500)
       .json({ status: "failed", message: "Internal server error" });
+  }
+});
+
+
+// Upload restaurant Image
+router.post("/restaurant/image/:id", upload.single("image"), async (req, res) => {
+  try {
+    const data = await uploadToCloudinary(req.file.path, "mealyRestaurant-images");
+
+    if(!data){
+      return res.status(400).json({
+        status: "failed",
+        message: "An error occurred while uploading the image",
+      });
+    }
+
+    const savedImg = await Restaurant.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          image: data.image,
+          publicId: data.public_id,
+        },
+      }
+    );
+
+    res.status(200).json({
+      data: data,
+      status: "success",
+      message: "restaurant image uploaded with success!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
+
+
+// Delete restaurant Image
+router.delete("/restaurant/image/:id", async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ _id: req.params.id });
+
+    const publicId = restaurant.publicId;
+
+    await removeFromCloudinary(publicId);
+
+    const deleteImg = await Restaurant.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          image: "",
+          publicId: "",
+        },
+      }
+    );
+    res.status(200).json({
+      data: restaurant,
+      status: "success",
+      message: "restaurant image deleted with success!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
   }
 });
 

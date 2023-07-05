@@ -7,6 +7,14 @@ dotenv.config();
 const router = express.Router();
 
 router.get("/payment-methods", userAuthMiddleWare, (req, res) => {
+
+  if (!req.user) {
+    return res.status(401).json({
+      status: "failed",
+      message: "Unauthorized",
+    });
+  }
+  
   const paymentMethods = ["debit Card", "bank transfer", "USSD", "cash"];
 
   res.status(200).json({
