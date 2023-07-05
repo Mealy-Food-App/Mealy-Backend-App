@@ -2,6 +2,9 @@ import Category from '../model/category.model.js';
 import Product from '../model/product.model.js';
 import express from 'express';
 import { categoryValidator } from "../validator/homepage.validator.js";
+import upload from "../middlewares/upload.js";
+import {uploadToCloudinary, removeFromCloudinary} from "../service/cloudinary.js";
+
 
 const router = express.Router()
 
@@ -34,7 +37,74 @@ router.post('/addCategory', async (req, res) => {
     });
   });
 
+  
 
+  // Upload category Image
+router.post("/category/image/:id", upload.single("image"), async (req, res) => {
+    try {
+      const data = await uploadToCloudinary(req.file.path, "mealyCategory-images");
+  
+      if(!data){
+        return res.status(400).json({
+          status: "failed",
+          message: "An error occurred while uploading the image",
+        });
+      }
+  
+      const savedImg = await Category.updateOne(
+        { _id: req.params.id },
+        {
+          $set: {
+            image: data.image,
+            publicId: data.public_id,
+          },
+        }
+      );
+  
+      res.status(200).json({
+        data: data,
+        status: "success",
+        message: "category image uploaded with success!",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  });
+  
+  
+  // Delete category Image
+  router.delete("/category/image/:id", async (req, res) => {
+    try {
+      const category = await Category.findOne({ _id: req.params.id });
+  
+      const publicId = category.publicId;
+  
+      await removeFromCloudinary(publicId);
+  
+      const deleteImg = await Category.updateOne(
+        { _id: req.params.id },
+        {
+          $set: {
+            image: "",
+            publicId: "",
+          },
+        }
+      );
+      res.status(200).json({
+        data: category,
+        status: "success",
+        message: "restaurant image deleted with success!",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  });
+  
+
+
+//   List all categories
 router.get('/categories', async (req, res) => {
     try {
         const categoryList = await Category.find();
