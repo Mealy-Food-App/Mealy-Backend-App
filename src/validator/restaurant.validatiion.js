@@ -30,4 +30,7 @@ export const createRestaurantValidator = Joi.object({
     'any.required': 'Estimated delivery time is required',
     'string.empty': 'Estimated delivery time is required',
   }),
+  topDeals: Joi.string().valid("free-delivery", "discount", "coupon", "black-friday").optional().messages({
+    'any.only': 'Invalid top deal value',
+  }),
 });

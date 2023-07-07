@@ -1,6 +1,6 @@
-import { Schema, model, mongoose } from "mongoose";
+import mongoose from "mongoose";
 
-const restaurantSchema = new Schema(
+const restaurantSchema = new mongoose.Schema(
   {
     image: {
       type: String,
@@ -38,6 +38,12 @@ const restaurantSchema = new Schema(
         ref: "Product",
       },
     ],
+    topDeals: [
+      {
+        type: String,
+        enum: ["free-delivery", "discount", "coupon", "black-friday"],
+      },
+    ],
     location: [
       {
         latitude: {
@@ -56,4 +62,4 @@ const restaurantSchema = new Schema(
   }
 );
 
-export default model("Restaurant", restaurantSchema);
+export default mongoose.model("Restaurant", restaurantSchema);

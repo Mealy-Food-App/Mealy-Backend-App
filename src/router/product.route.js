@@ -36,7 +36,7 @@ router.post("/addProduct", async (req, res) => {
       description: req.body.description,
       image: req.body.image,
       category: category.name,
-      mealOfTheDay: req.body.mealOfTheDay,
+      mealOfTheWeek: req.body.mealOfTheWeek,
       isFeatured: req.body.isFeatured,
     });
 
