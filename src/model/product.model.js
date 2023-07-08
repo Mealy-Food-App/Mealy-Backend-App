@@ -26,7 +26,7 @@ const productSchema = new Schema(
       ref: "Category",
       required: true,
     },
-    mealOfTheDay: {
+    mealOfTheWeek: {
       type: Boolean,
       required: false,
     },

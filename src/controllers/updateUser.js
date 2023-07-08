@@ -1,7 +1,6 @@
-// import { BadUserRequestError } from "../error/error.js";
 import User from "../model/user.model.js";
 import { updateUserValidator } from "../validator/updateUser.validator.js";
-import nodemailer from "nodemailer";
+// import nodemailer from "nodemailer";
 
 export default class UpdateController {
   static async updateUser(req, res) {
@@ -52,7 +51,6 @@ export default class UpdateController {
 
     if (!getUser) {
       return res.status(404).json({ error: "User not found" });
-      // throw new BadUserRequestError ("user does not exist")
     }
     res.status(200).json({
       message: "User profile updated successfully",

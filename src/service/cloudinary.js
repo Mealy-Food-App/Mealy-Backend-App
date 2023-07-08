@@ -1,4 +1,3 @@
-// import cloudinary from "cloudinary"
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 dotenv.config();
@@ -23,5 +22,3 @@ export const removeFromCloudinary = async (public_id) => {
     console.log(result, error);
   });
 };
-
-// module.exports = { uploadToCloudinary, removeFromCloudinary }

@@ -12,7 +12,6 @@ export default class CouponController {
     try {
     const { couponCode, type, value, expirationDate } = req.body;
 
-      // Check if the coupon code already exists
       const existingCoupon = await Coupon.findOne({ couponCode });
       if (existingCoupon) {
         return res.status(409).json({
