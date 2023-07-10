@@ -44,6 +44,7 @@ const userSchema = new Schema(
     },
     token: {
       type: String,
+      expires: "30m",
     },
   },
   {
