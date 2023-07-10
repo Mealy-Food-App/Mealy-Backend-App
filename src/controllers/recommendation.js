@@ -46,6 +46,16 @@ export default class RecommendationController {
         },
       ]);
 
+      if (popularProducts.length < 10) {
+        const popularProductIds = popularProducts.map((product) => product.productId);
+        const popularCategories = await Product.distinct("category", { _id: { $in: popularProductIds } });
+        const additionalProducts = await Product.aggregate([
+          { $match: { category: { $in: popularCategories }, _id: { $nin: popularProductIds } } },
+          { $sample: { size: 50 - popularProducts.length } },
+        ]);
+
+        popularProducts.push(...additionalProducts);
+      }
       res.status(200).json({
         status: "success",
         message: "Popular products retrieved",
