@@ -1,7 +1,7 @@
 import UserRating from  "../model/rating.model.js"
 import { ratingValidator } from "../validator/rating.validator.js";
 import User from "../model/user.model.js";
-// import { BadUserRequestError } from "../error/error.js";
+
 
 export default class FeedbackController {
   static async ratings(req, res) {

@@ -42,9 +42,9 @@ export default class CheckoutController {
 
       const orderId = "Mealy" + generateOrderId();
 
-      let discountAmount = cart.discountAmount;
+      let couponDiscount = cart.couponDiscount;
       const deliveryCharge = cart.deliveryCharge;
-      const totalAmount = cartAmount + deliveryCharge - discountAmount;
+      const totalAmount = cartAmount + deliveryCharge - couponDiscount;
 
       const order = new Order({
         userId,
@@ -52,7 +52,7 @@ export default class CheckoutController {
         deliveryAddress: cart.deliveryAddress,
         cartAmount,
         deliveryCharge,
-        discountAmount,
+        couponDiscount,
         totalAmount,
         deliveryDate: cart.deliveryDate,
         orderId,
@@ -66,16 +66,16 @@ export default class CheckoutController {
 
       await order.save();
 
-      res.redirect("/payment-methods");
+      // res.redirect("/payment-methods");
 
       // Clear the user's cart after successful checkout
       // await Cart.deleteOne({ userId });
 
-      // res.status(200).json({
-      //   status: "success",
-      //   message: "checkout successful",
-      //   data: order
-      // });
+      res.status(200).json({
+        status: "success",
+        message: "checkout successful",
+        data: order
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server Error" });

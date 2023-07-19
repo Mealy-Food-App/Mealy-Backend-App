@@ -1,4 +1,4 @@
-import OrderHistory from "../model/order.model.js";
+import Order from "../model/order.model.js";
 
 export default class OrderController {
   static async orderHistory(req, res) {
@@ -12,8 +12,7 @@ export default class OrderController {
     try {
       const userId = req.user._id;
 
-      // Find the user's orders
-      const orders = await OrderHistory.find({ userId })
+      const orders = await Order.find({ userId })
         .populate("items.productId") // Populate the product details
         .sort({ createdAt: -1 });
 

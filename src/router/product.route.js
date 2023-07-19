@@ -4,6 +4,7 @@ import Category from "../model/category.model.js";
 import { productValidator } from "../validator/homepage.validator.js";
 import upload from "../middlewares/upload.js";
 import {uploadToCloudinary, removeFromCloudinary} from "../service/cloudinary.js";
+import Restaurant from "../model/restaurant.model.js";
 
 
 //Create Product
@@ -22,12 +23,23 @@ router.post("/addProduct", async (req, res) => {
   }
 
   const categoryName = req.body.category;
+  const restaurantName = req.body.restaurant;
 
   try {
     let category = await Category.findOne({ name: categoryName });
 
     if (!category) {
-      res.send("Category does not exist, Create one");
+      return res
+      .status(409)
+      .json({ status: "failed", message:"Category does not exist, Create one"});
+    }
+
+    let restaurant = await Restaurant.findOne({ name: restaurantName });
+
+    if (!restaurant) {
+      return res
+      .status(409)
+      .json({ status: "failed", message:"Restaurant does not exist, Create one"});
     }
 
     const product = new Product({
@@ -36,11 +48,15 @@ router.post("/addProduct", async (req, res) => {
       description: req.body.description,
       image: req.body.image,
       category: category.name,
-      mealOfTheDay: req.body.mealOfTheDay,
+      mealOfTheWeek: req.body.mealOfTheWeek,
       isFeatured: req.body.isFeatured,
+      restaurant: restaurant.name,
     });
 
     await product.save();
+
+    restaurant.products.push(product._id);
+    await restaurant.save();
 
     category.product.push(product._id); // Add the product's _id to the category's product array
     await category.save();
@@ -48,7 +64,7 @@ router.post("/addProduct", async (req, res) => {
     res.status(200).json({
       data: product,
       status: "success",
-      message: "Product has been created and added to the category",
+      message: "Product has been created",
     });
   } catch (error) {
     res.status(500).json({
@@ -71,7 +87,6 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
       });
     }
 
-    //Save Image and publiId to the database
     const savedImg = await Product.updateOne(
       { _id: req.params.id },
       {
@@ -87,7 +102,6 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
       status: "success",
       message: "product image uploaded with success!",
     });
-    // res.status(200).send("user image uploaded with success!");
   } catch (error) {
     console.log(error);
     res.status(400).send(error);
@@ -95,10 +109,9 @@ router.post("/image/:id", upload.single("image"), async (req, res) => {
 });
 
 
-// Delete User Image
+// Delete product Image
 router.delete("/image/:id", async (req, res) => {
   try {
-    //Find user
     const product = await Product.findOne({ _id: req.params.id });
 
     const publicId = product.publicId;
@@ -126,7 +139,6 @@ router.delete("/image/:id", async (req, res) => {
 });
 
 
-
 //List Products
 router.get("/products", async (req, res) => {
   try {
@@ -146,6 +158,7 @@ router.get("/products", async (req, res) => {
       .json({ status: "failed", message: "internal server error" });
   }
 });
+
 
 //find a product by name
 router.get("/", async (req, res) => {
@@ -169,6 +182,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 //update
 router.put("/update/:name", (req, res) => {
   const { name } = req.params;
@@ -176,9 +190,11 @@ router.put("/update/:name", (req, res) => {
   Product.findOneAndUpdate({ name }, req.body)
     .then((product) => {
       if (product) {
-        return res
-          .status(200)
-          .json({ status: "success", message: "product has been updated" });
+       return res.status(200).json({
+          status: "success",
+          data: product,
+          message: "Product has been updated successfully",
+        });
       }
       return res
         .status(400)
@@ -188,6 +204,7 @@ router.put("/update/:name", (req, res) => {
       return res.status(400).json({ status: "failed", error: err });
     });
 });
+
 
 //delete
 router.delete("/delete/:name", (req, res) => {
@@ -211,6 +228,7 @@ router.delete("/delete/:name", (req, res) => {
 
 export { router };
 
+
 // add same product to another category
 router.post("/addToCategory/:productId", async (req, res) => {
   const { productId } = req.params;
@@ -233,7 +251,6 @@ router.post("/addToCategory/:productId", async (req, res) => {
         .json({ status: "failed", message: "Category not found" });
     }
 
-    // Check if the product is already associated with the category
     if (category.product.includes(productId)) {
       return res.status(409).json({
         status: "failed",
@@ -281,7 +298,6 @@ router.delete("/removeFromCategory/:categoryId/:productId", async (req, res) => 
         .json({ status: "failed", message: "Category not found" });
     }
 
-    // Check if the product is associated with the category
     if (!category.product.includes(productId)) {
       return res
         .status(404)

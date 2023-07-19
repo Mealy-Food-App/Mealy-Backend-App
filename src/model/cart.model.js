@@ -40,7 +40,7 @@ const cartSchema = new Schema(
       type: Number,
       required: false,
     },
-    discountAmount: {
+    couponDiscount: {
       type: Number,
       required: false,
     },

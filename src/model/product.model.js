@@ -26,13 +26,17 @@ const productSchema = new Schema(
       ref: "Category",
       required: true,
     },
-    mealOfTheDay: {
+    mealOfTheWeek: {
       type: Boolean,
       required: false,
     },
     isFeatured: {
       type: Boolean,
       default: false,
+    },
+    restaurant: {
+      type: String,
+      ref: "Restaurant",
     },
   },
   {

@@ -12,6 +12,7 @@ import DeliveryController from "../controllers/scheduleDelivery.js";
 import CheckoutController from "../controllers/checkout.js";
 import OrderController from "../controllers/orderHistory.js";
 import CouponController from "../controllers/coupon.controller.js";
+import RecommendationController from "../controllers/recommendation.js";
 
 // import ForgotPasswordController from "../controllers/reset.auth.js"
 
@@ -29,7 +30,7 @@ router.post('/confirmtoken', UserController.confirmToken);
 router.post('/resetpassword', UserController.resetPassword);
 
 // user update route
-router.put('/updateuser', userAuthMiddleWare, tryCatchHandler (UpdateController.updateUser));
+router.put('/updateuser/:userId', userAuthMiddleWare, tryCatchHandler (UpdateController.updateUser));
 
 // feedback route
 router.post('/feedback', userAuthMiddleWare, tryCatchHandler (FeedbackController.feedBack))
@@ -55,6 +56,9 @@ router.get('/orderhistory', userAuthMiddleWare, tryCatchHandler (OrderController
 
 // coupon routes
 router.post('/createCoupons', CouponController.createCoupon);
+
+// recommendation route
+router.get("/recommendations/:userId", userAuthMiddleWare, RecommendationController.recommendation);
 
 
 export {router};

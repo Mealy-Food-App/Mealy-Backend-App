@@ -21,7 +21,6 @@ export default class RemoveCartController {
         const { productId } = req.params;
         const userId = req.user._id;
 
-      // Find the user's cart
       const cart = await Cart.findOne({ userId });
 
       if (!cart) {
@@ -53,17 +52,14 @@ export default class RemoveCartController {
         );
       }
 
-      // Calculate the total amount of the cart
       let totalAmount = 0;
       for (const item of cart.items) {
         const product = await Product.findById(item.productId);
         totalAmount += product.price * item.quantity;
       }
 
-      // Save the updated cart
       await cart.save();
 
-      // Send the updated cart data and total amount back to the client
       res.status(200).json({
         status: "success",
         message: "Item quantity reduced in cart",
