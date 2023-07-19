@@ -4,6 +4,7 @@ import Category from "../model/category.model.js";
 import { productValidator } from "../validator/homepage.validator.js";
 import upload from "../middlewares/upload.js";
 import {uploadToCloudinary, removeFromCloudinary} from "../service/cloudinary.js";
+import Restaurant from "../model/restaurant.model.js";
 
 
 //Create Product
@@ -22,12 +23,23 @@ router.post("/addProduct", async (req, res) => {
   }
 
   const categoryName = req.body.category;
+  const restaurantName = req.body.restaurant;
 
   try {
     let category = await Category.findOne({ name: categoryName });
 
     if (!category) {
-      res.send("Category does not exist, Create one");
+      return res
+      .status(409)
+      .json({ status: "failed", message:"Category does not exist, Create one"});
+    }
+
+    let restaurant = await Restaurant.findOne({ name: restaurantName });
+
+    if (!restaurant) {
+      return res
+      .status(409)
+      .json({ status: "failed", message:"Restaurant does not exist, Create one"});
     }
 
     const product = new Product({
@@ -38,9 +50,13 @@ router.post("/addProduct", async (req, res) => {
       category: category.name,
       mealOfTheWeek: req.body.mealOfTheWeek,
       isFeatured: req.body.isFeatured,
+      restaurant: restaurant.name,
     });
 
     await product.save();
+
+    restaurant.products.push(product._id);
+    await restaurant.save();
 
     category.product.push(product._id); // Add the product's _id to the category's product array
     await category.save();
@@ -48,7 +64,7 @@ router.post("/addProduct", async (req, res) => {
     res.status(200).json({
       data: product,
       status: "success",
-      message: "Product has been created and added to the category",
+      message: "Product has been created",
     });
   } catch (error) {
     res.status(500).json({
@@ -174,9 +190,11 @@ router.put("/update/:name", (req, res) => {
   Product.findOneAndUpdate({ name }, req.body)
     .then((product) => {
       if (product) {
-        return res
-          .status(200)
-          .json({ status: "success", message: "product has been updated" });
+       return res.status(200).json({
+          status: "success",
+          data: product,
+          message: "Product has been updated successfully",
+        });
       }
       return res
         .status(400)
