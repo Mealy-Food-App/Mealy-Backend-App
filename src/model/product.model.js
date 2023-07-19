@@ -34,6 +34,10 @@ const productSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    restaurant: {
+      type: String,
+      ref: "Restaurant",
+    },
   },
   {
     timestamps: true,

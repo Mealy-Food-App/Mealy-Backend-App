@@ -8,6 +8,7 @@ export const productValidator =  Joi.object({
   category: Joi.string().required(),
   mealOfTheDay: Joi.boolean().required(),
   isFeatured: Joi.boolean().default(false),
+  restaurant: Joi.string().required()
 });
 
 export const categoryValidator = Joi.object({
