@@ -17,6 +17,16 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      mealCustomizations: [
+        {
+          name: { type: String, required: true },
+          options: [{ type: String, required: true }],
+        },
+      ],
+      userDefinedCustomizations: {
+        type: String,
+        default: '',
+      },
     },
   ],
   deliveryAddress: {

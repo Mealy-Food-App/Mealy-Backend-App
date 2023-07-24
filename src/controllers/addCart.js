@@ -18,7 +18,7 @@ export default class CartController {
     }
 
     try {
-      const { productName, quantity, deliveryAddress, couponCode } = req.body;
+      const { productName, quantity, deliveryAddress, couponCode, mealCustomizations, } = req.body;
       const userId = req.user._id;
 
       const product = await Product.findOne({ name: productName });
@@ -44,13 +44,15 @@ export default class CartController {
       );
 
       if (existingItemIndex !== -1) {
-        // If the product exists, update the quantity
+        // If the product exists, update the quantity and mealCustomizations
         cart.items[existingItemIndex].quantity += quantity;
+        cart.items[existingItemIndex].mealCustomizations = mealCustomizations || [];
       } else {
         // If the product doesn't exist, add it to the cart
         cart.items.push({
           productId: product._id,
           quantity,
+          mealCustomizations: mealCustomizations || [],
         });
       }
 

@@ -6,9 +6,16 @@ export const productValidator =  Joi.object({
   description: Joi.string(),
   image: Joi.array().items(Joi.string()),
   category: Joi.string().required(),
-  mealOfTheDay: Joi.boolean().required(),
+  mealOfTheWeek: Joi.boolean().optional(),
   isFeatured: Joi.boolean().default(false),
-  restaurant: Joi.string().required()
+  restaurant: Joi.string().required(),
+  mealCustomizations: Joi.array().items(
+    Joi.object({
+      name: Joi.string().required(),
+      options: Joi.array().items(Joi.string()).required(),
+    })
+  ),
+  userDefinedCustomizations: Joi.string().default(''),
 });
 
 export const categoryValidator = Joi.object({

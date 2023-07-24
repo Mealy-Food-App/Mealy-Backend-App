@@ -49,6 +49,7 @@ export default class CheckoutController {
       const order = new Order({
         userId,
         items: cart.items,
+        customizations: cart.mealCustomizations,
         deliveryAddress: cart.deliveryAddress,
         cartAmount,
         deliveryCharge,
@@ -84,8 +85,7 @@ export default class CheckoutController {
 }
 
 function isValidForCheckout(cart) {
-  // validation logic here
-  // For example, check if the cart has at least one item and a valid delivery address
+  // check if the cart has at least one item and a valid delivery address
   if (cart.items.length === 0 || !cart.deliveryAddress) {
     return false;
   }
