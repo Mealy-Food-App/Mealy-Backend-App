@@ -19,6 +19,16 @@ const cartSchema = new Schema(
           required: true,
           default: 1,
         },
+        mealCustomizations: [
+          {
+            name: { type: String, required: true },
+            options: [{ type: String, required: true }],
+          },
+        ],
+        userDefinedCustomizations: {
+          type: String,
+          default: '',
+        },
       },
     ],
     deliveryDate: {

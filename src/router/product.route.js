@@ -51,6 +51,8 @@ router.post("/addProduct", async (req, res) => {
       mealOfTheWeek: req.body.mealOfTheWeek,
       isFeatured: req.body.isFeatured,
       restaurant: restaurant.name,
+      mealCustomizations: req.body.mealCustomizations || [],
+      userDefinedCustomizations: req.body.userDefinedCustomizations || '',
     });
 
     await product.save();

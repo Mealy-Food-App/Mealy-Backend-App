@@ -38,6 +38,16 @@ const productSchema = new Schema(
       type: String,
       ref: "Restaurant",
     },
+    mealCustomizations: [
+      {
+        name: { type: String, required: true },
+        options: [{ type: String, required: true }],
+      },
+    ],
+    userDefinedCustomizations: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,
