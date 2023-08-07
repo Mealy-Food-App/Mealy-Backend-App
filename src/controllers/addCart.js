@@ -18,7 +18,7 @@ export default class CartController {
     }
 
     try {
-      const { productName, quantity, deliveryAddress, couponCode, mealCustomizations, } = req.body;
+      const { productName, quantity, deliveryAddress, couponCode, mealCustomizations } = req.body;
       const userId = req.user._id;
 
       const product = await Product.findOne({ name: productName });
@@ -29,12 +29,25 @@ export default class CartController {
         });
       }
 
+      // Calculate the total customization price
+      let customizationPrice = 0;
+      if (mealCustomizations && mealCustomizations.length > 0) {
+        for (const customization of mealCustomizations) {
+          const selectedOption = product.mealCustomizations.find(option => option.name === customization.name);
+          if (selectedOption) {
+            const selectedPriceOption = selectedOption.options.find(option => option.nameOption === customization.option);
+            if (selectedPriceOption) {
+              customizationPrice += selectedPriceOption.priceOption;
+            }
+          }
+        }
+      }
+
       let cart = await Cart.findOne({ userId });
 
       if (!cart) {
         cart = new Cart({ userId, items: [], deliveryAddress });
       } else {
-        // If the cart already exists, update the delivery address
         cart.deliveryAddress = deliveryAddress;
       }
 
@@ -44,11 +57,9 @@ export default class CartController {
       );
 
       if (existingItemIndex !== -1) {
-        // If the product exists, update the quantity and mealCustomizations
         cart.items[existingItemIndex].quantity += quantity;
         cart.items[existingItemIndex].mealCustomizations = mealCustomizations || [];
       } else {
-        // If the product doesn't exist, add it to the cart
         cart.items.push({
           productId: product._id,
           quantity,
@@ -56,12 +67,12 @@ export default class CartController {
         });
       }
 
-      // Calculate the total amount of the cart
       let cartAmount = 0;
-      for (const item of cart.items) {
-        const product = await Product.findById(item.productId);
-        cartAmount += product.price * item.quantity;
+      if (product) {
+        const productPrice = parseFloat(product.price);
+        cartAmount = (productPrice + customizationPrice) * quantity;
       }
+      
 
       const deliveryCharge = 700;
       let totalAmount = cartAmount + deliveryCharge;
@@ -116,7 +127,7 @@ export default class CartController {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({message: "Server Error" });
+      res.status(500).json({ message: "internal Server Error" });
     }
   }
 }

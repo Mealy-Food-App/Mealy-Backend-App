@@ -374,3 +374,38 @@ router.put("/updateCategory/:productId", async (req, res) => {
     });
   }
 });
+
+
+
+// delete a mealCustomization
+router.delete("/deleteMealCustomization/:productId", async (req, res) => {
+  const productId = req.params.productId;
+
+  try {
+    const product = await Product.findOneAndUpdate(
+      {_id: productId},
+      {$unset: {mealCustomizations: ""}},
+      {new: true}
+      );
+
+      if(!product) {
+        return res.status(404).json({
+          status: "failed",
+          message: "Product not found"
+      })
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Product successfully deleted",
+      date: product,
+    })
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      status: "failed",
+      message: "internal error",
+    });
+  }
+})

@@ -21,28 +21,38 @@ const cartSchema = new Schema(
         },
         mealCustomizations: [
           {
-            name: { type: String, required: true },
-            options: [{ type: String, required: true }],
+            name: {
+              type: String,
+              required: false,
+            },
+            option: {
+              type: String,
+              required: false,
+            },
+            price: {
+              type: Number,
+              required: false,
+            },
           },
         ],
         userDefinedCustomizations: {
           type: String,
-          default: '',
+          default: "",
         },
       },
     ],
     deliveryDate: {
       type: Date,
-      ref: "delivery"
+      ref: "delivery",
     },
     deliveryAddress: {
-      type: String
+      type: String,
     },
-      couponCode: {
-        type: String,
-        required: false,
-      },
-    cartAmount:{
+    couponCode: {
+      type: String,
+      required: false,
+    },
+    cartAmount: {
       type: Number,
       required: false,
     },

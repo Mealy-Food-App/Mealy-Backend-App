@@ -7,8 +7,9 @@ export const cartValidator = Joi.object({
   couponCode: Joi.string().optional(),
   mealCustomizations: Joi.array().items(
     Joi.object({
-      name: Joi.string().required(),
-      options: Joi.array().items(Joi.string()).required(),
+      name: Joi.string().optional(),
+      option: Joi.string().optional(),
+      price: Joi.number().optional(),
     })
   ).optional(),
   userDefinedCustomizations: Joi.string().default(''),

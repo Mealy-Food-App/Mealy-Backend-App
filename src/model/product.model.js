@@ -40,13 +40,27 @@ const productSchema = new Schema(
     },
     mealCustomizations: [
       {
-        name: { type: String, required: true },
-        options: [{ type: String, required: true }],
+        name: {
+          type: String,
+          required: false,
+        },
+        options: [
+          {
+            nameOption: {
+              type: String,
+              required: false,
+            },
+            priceOption: {
+              type: Number,
+              required: false,
+            },
+          },
+        ],
       },
     ],
     userDefinedCustomizations: {
       type: String,
-      default: '',
+      default: "",
     },
   },
   {
