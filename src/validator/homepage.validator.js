@@ -12,9 +12,14 @@ export const productValidator =  Joi.object({
   mealCustomizations: Joi.array().items(
     Joi.object({
       name: Joi.string().required(),
-      options: Joi.array().items(Joi.string()).required(),
+      options: Joi.array().items(
+        Joi.object({
+          nameOption: Joi.string().required(),
+          priceOption: Joi.number().required(),
+        })
+      ).required(),
     })
-  ),
+  ).optional(),
   userDefinedCustomizations: Joi.string().default(''),
 });
 
