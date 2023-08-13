@@ -68,11 +68,28 @@ export default class CartController {
       }
 
       let cartAmount = 0;
-      if (product) {
+      for (const item of cart.items) {
+        const product = await Product.findById(item.productId);
         const productPrice = parseFloat(product.price);
-        cartAmount = (productPrice + customizationPrice) * quantity;
+        const itemCustomizationPrice = item.mealCustomizations.reduce(
+          (totalPrice, customization) => {
+            const selectedOption = product.mealCustomizations.find(
+              (option) => option.name === customization.name
+            );
+            if (selectedOption) {
+              const selectedPriceOption = selectedOption.options.find(
+                (option) => option.nameOption === customization.option
+              );
+              if (selectedPriceOption) {
+                totalPrice += selectedPriceOption.priceOption;
+              }
+            }
+            return totalPrice;
+          },
+          0
+        );
+        cartAmount += (productPrice + itemCustomizationPrice) * item.quantity;
       }
-      
 
       const deliveryCharge = 700;
       let totalAmount = cartAmount + deliveryCharge;

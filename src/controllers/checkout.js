@@ -35,23 +35,30 @@ export default class CheckoutController {
 
       // Calculate the total amount of the cart
       let cartAmount = 0;
+      let customizationPrice = 0;
+
       for (const item of cart.items) {
         const product = await Product.findById(item.productId);
+
+        // Calculate customization price for each item
+        for (const customization of item.mealCustomizations) {
+          customizationPrice += customization.price * item.quantity;
+        }
         cartAmount += product.price * item.quantity;
+
       }
 
       const orderId = "Mealy" + generateOrderId();
 
       let couponDiscount = cart.couponDiscount;
       const deliveryCharge = cart.deliveryCharge;
-      const totalAmount = cartAmount + deliveryCharge - couponDiscount;
+      const totalAmount = cartAmount + deliveryCharge - couponDiscount + customizationPrice;
 
       const order = new Order({
         userId,
         items: cart.items,
-        customizations: cart.mealCustomizations,
         deliveryAddress: cart.deliveryAddress,
-        cartAmount,
+        cartAmount: cartAmount + customizationPrice,
         deliveryCharge,
         couponDiscount,
         totalAmount,
@@ -74,8 +81,8 @@ export default class CheckoutController {
 
       res.status(200).json({
         status: "success",
-        message: "checkout successful",
-        data: order
+        message: "Checkout successful",
+        data: order,
       });
     } catch (error) {
       console.error(error);
@@ -85,8 +92,12 @@ export default class CheckoutController {
 }
 
 function isValidForCheckout(cart) {
-  // check if the cart has at least one item and a valid delivery address
-  if (cart.items.length === 0 || !cart.deliveryAddress) {
+  // Check if the cart has at least one item, a valid delivery address,
+  if (
+    cart.items.length === 0 ||
+    !cart.deliveryAddress 
+    // cart.items.some((item) => item.mealCustomizations && item.mealCustomizations.length === 0)
+  ) {
     return false;
   }
 
